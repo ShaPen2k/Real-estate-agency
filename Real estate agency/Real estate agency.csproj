@@ -1,0 +1,212 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RootNamespace>Real_estate_agency</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Images\Agents\ВасильеваОльга.jpg" />
+    <None Remove="Images\Agents\КузнецовИгорь.jpg" />
+    <None Remove="Images\Agents\ЛебедеваЮлия.jpg" />
+    <None Remove="Images\Agents\МорозовКирилл.jpg" />
+    <None Remove="Images\Agents\ПетиновСергей.jpg" />
+    <None Remove="Images\Agents\СмирноваАнна.jpg" />
+    <None Remove="Images\Agents\ТимофеевАлександр.jpg" />
+    <None Remove="Images\Agents\ФедороваНаталья.jpg" />
+    <None Remove="Images\captcha.png" />
+    <None Remove="Images\Clients\client1.jpg" />
+    <None Remove="Images\Clients\client2.jpg" />
+    <None Remove="Images\Clients\client3.jpg" />
+    <None Remove="Images\Clients\client4.jpg" />
+    <None Remove="Images\Clients\client5.jpg" />
+    <None Remove="Images\Clients\client6.jpg" />
+    <None Remove="Images\Clients\client7.jpg" />
+    <None Remove="Images\Clients\client8.jpg" />
+    <None Remove="Images\colorlogo.png" />
+    <None Remove="Images\docimage.png" />
+    <None Remove="Images\edit.png" />
+    <None Remove="Images\handshake.png" />
+    <None Remove="Images\home.png" />
+    <None Remove="Images\Owners\owner1.jpg" />
+    <None Remove="Images\Owners\owner2.jpg" />
+    <None Remove="Images\Owners\owner3.jpg" />
+    <None Remove="Images\Owners\owner4.jpg" />
+    <None Remove="Images\Owners\owner5.jpg" />
+    <None Remove="Images\Owners\owner6.jpg" />
+    <None Remove="Images\Owners\owner7.jpg" />
+    <None Remove="Images\Owners\owner8.jpg" />
+    <None Remove="Images\plus.png" />
+    <None Remove="Images\previous.png" />
+    <None Remove="Images\Realty\realty1.jpg" />
+    <None Remove="Images\Realty\realty10.jpg" />
+    <None Remove="Images\Realty\realty11.jpg" />
+    <None Remove="Images\Realty\realty12.jpg" />
+    <None Remove="Images\Realty\realty13.jpg" />
+    <None Remove="Images\Realty\realty14.jpg" />
+    <None Remove="Images\Realty\realty15.jpg" />
+    <None Remove="Images\Realty\realty16.jpg" />
+    <None Remove="Images\Realty\realty17.jpg" />
+    <None Remove="Images\Realty\realty18.jpg" />
+    <None Remove="Images\Realty\realty19.jpg" />
+    <None Remove="Images\Realty\realty2.jpg" />
+    <None Remove="Images\Realty\realty20.jpg" />
+    <None Remove="Images\Realty\realty21.jpg" />
+    <None Remove="Images\Realty\realty22.jpg" />
+    <None Remove="Images\Realty\realty23.jpg" />
+    <None Remove="Images\Realty\realty24.jpg" />
+    <None Remove="Images\Realty\realty25.jpg" />
+    <None Remove="Images\Realty\realty26.jpg" />
+    <None Remove="Images\Realty\realty27.jpg" />
+    <None Remove="Images\Realty\realty28.jpg" />
+    <None Remove="Images\Realty\realty29.jpg" />
+    <None Remove="Images\Realty\realty3.jpg" />
+    <None Remove="Images\Realty\realty30.jpg" />
+    <None Remove="Images\Realty\realty31.jpg" />
+    <None Remove="Images\Realty\realty32.jpg" />
+    <None Remove="Images\Realty\realty33.jpg" />
+    <None Remove="Images\Realty\realty34.jpg" />
+    <None Remove="Images\Realty\realty35.jpg" />
+    <None Remove="Images\Realty\realty36.jpg" />
+    <None Remove="Images\Realty\realty37.jpg" />
+    <None Remove="Images\Realty\realty38.jpg" />
+    <None Remove="Images\Realty\realty39.jpg" />
+    <None Remove="Images\Realty\realty4.jpg" />
+    <None Remove="Images\Realty\realty40.jpg" />
+    <None Remove="Images\Realty\realty41.jpg" />
+    <None Remove="Images\Realty\realty42.jpg" />
+    <None Remove="Images\Realty\realty43.jpg" />
+    <None Remove="Images\Realty\realty44.jpg" />
+    <None Remove="Images\Realty\realty45.jpg" />
+    <None Remove="Images\Realty\realty46.jpg" />
+    <None Remove="Images\Realty\realty47.jpg" />
+    <None Remove="Images\Realty\realty48.jpg" />
+    <None Remove="Images\Realty\realty49.jpg" />
+    <None Remove="Images\Realty\realty5.jpg" />
+    <None Remove="Images\Realty\realty50.jpg" />
+    <None Remove="Images\Realty\realty6.jpg" />
+    <None Remove="Images\Realty\realty7.jpg" />
+    <None Remove="Images\Realty\realty8.jpg" />
+    <None Remove="Images\Realty\realty9.jpg" />
+    <None Remove="Images\remove.png" />
+    <None Remove="Images\truelogo.png" />
+    <None Remove="Images\update.png" />
+    <None Remove="map.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="map.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\Agents\МорозовКирилл.jpg" />
+    <Resource Include="Images\Agents\ТимофеевАлександр.jpg" />
+    <Resource Include="Images\Agents\ФедороваНаталья.jpg" />
+    <Resource Include="Images\docimage.png" />
+    <Resource Include="Images\Owners\owner8.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\Owners\owner1.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DocX" Version="4.0.25105.5786" />
+    <PackageReference Include="EPPlus" Version="8.0.5" />
+    <PackageReference Include="FontAwesome.Sharp" Version="6.3.0" />
+    <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.1.0" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3240.44" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10" />
+    <PackageReference Include="VirtualizingWrapPanel" Version="2.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\Agents\ВасильеваОльга.jpg" />
+    <Resource Include="Images\Agents\КузнецовИгорь.jpg" />
+    <Resource Include="Images\Agents\ЛебедеваЮлия.jpg" />
+    <Resource Include="Images\Agents\ПетиновСергей.jpg" />
+    <Resource Include="Images\Agents\СмирноваАнна.jpg" />
+    <Resource Include="Images\captcha.png" />
+    <Resource Include="Images\Clients\client1.jpg" />
+    <Resource Include="Images\Clients\client2.jpg" />
+    <Resource Include="Images\Clients\client3.jpg" />
+    <Resource Include="Images\Clients\client4.jpg" />
+    <Resource Include="Images\Clients\client5.jpg" />
+    <Resource Include="Images\Clients\client6.jpg" />
+    <Resource Include="Images\Clients\client7.jpg" />
+    <Resource Include="Images\Clients\client8.jpg" />
+    <Resource Include="Images\edit.png" />
+    <Resource Include="Images\handshake.png" />
+    <Resource Include="Images\home.png" />
+    <Resource Include="Images\Owners\owner2.jpg" />
+    <Resource Include="Images\Owners\owner3.jpg" />
+    <Resource Include="Images\Owners\owner4.jpg" />
+    <Resource Include="Images\Owners\owner5.jpg" />
+    <Resource Include="Images\Owners\owner6.jpg" />
+    <Resource Include="Images\Owners\owner7.jpg" />
+    <Resource Include="Images\plus.png" />
+    <Resource Include="Images\previous.png" />
+    <Resource Include="Images\Realty\realty1.jpg" />
+    <Resource Include="Images\Realty\realty10.jpg" />
+    <Resource Include="Images\Realty\realty11.jpg" />
+    <Resource Include="Images\Realty\realty12.jpg" />
+    <Resource Include="Images\Realty\realty13.jpg" />
+    <Resource Include="Images\Realty\realty14.jpg" />
+    <Resource Include="Images\Realty\realty15.jpg" />
+    <Resource Include="Images\Realty\realty16.jpg" />
+    <Resource Include="Images\Realty\realty17.jpg" />
+    <Resource Include="Images\Realty\realty18.jpg" />
+    <Resource Include="Images\Realty\realty19.jpg" />
+    <Resource Include="Images\Realty\realty2.jpg" />
+    <Resource Include="Images\Realty\realty20.jpg" />
+    <Resource Include="Images\Realty\realty21.jpg" />
+    <Resource Include="Images\Realty\realty22.jpg" />
+    <Resource Include="Images\Realty\realty23.jpg" />
+    <Resource Include="Images\Realty\realty24.jpg" />
+    <Resource Include="Images\Realty\realty25.jpg" />
+    <Resource Include="Images\Realty\realty26.jpg" />
+    <Resource Include="Images\Realty\realty27.jpg" />
+    <Resource Include="Images\Realty\realty28.jpg" />
+    <Resource Include="Images\Realty\realty29.jpg" />
+    <Resource Include="Images\Realty\realty3.jpg" />
+    <Resource Include="Images\Realty\realty30.jpg" />
+    <Resource Include="Images\Realty\realty31.jpg" />
+    <Resource Include="Images\Realty\realty32.jpg" />
+    <Resource Include="Images\Realty\realty33.jpg" />
+    <Resource Include="Images\Realty\realty34.jpg" />
+    <Resource Include="Images\Realty\realty35.jpg" />
+    <Resource Include="Images\Realty\realty36.jpg" />
+    <Resource Include="Images\Realty\realty37.jpg" />
+    <Resource Include="Images\Realty\realty38.jpg" />
+    <Resource Include="Images\Realty\realty39.jpg" />
+    <Resource Include="Images\Realty\realty4.jpg" />
+    <Resource Include="Images\Realty\realty40.jpg" />
+    <Resource Include="Images\Realty\realty41.jpg" />
+    <Resource Include="Images\Realty\realty42.jpg" />
+    <Resource Include="Images\Realty\realty43.jpg" />
+    <Resource Include="Images\Realty\realty44.jpg" />
+    <Resource Include="Images\Realty\realty45.jpg" />
+    <Resource Include="Images\Realty\realty46.jpg" />
+    <Resource Include="Images\Realty\realty47.jpg" />
+    <Resource Include="Images\Realty\realty48.jpg" />
+    <Resource Include="Images\Realty\realty49.jpg" />
+    <Resource Include="Images\Realty\realty5.jpg" />
+    <Resource Include="Images\Realty\realty50.jpg" />
+    <Resource Include="Images\Realty\realty6.jpg" />
+    <Resource Include="Images\Realty\realty7.jpg" />
+    <Resource Include="Images\Realty\realty8.jpg" />
+    <Resource Include="Images\Realty\realty9.jpg" />
+    <Resource Include="Images\remove.png" />
+    <Resource Include="Images\update.png" />
+    <Resource Include="Images\truelogo.png" />
+    <Resource Include="Images\user.png" />
+  </ItemGroup>
+
+</Project>
