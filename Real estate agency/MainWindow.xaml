@@ -61,7 +61,7 @@
                     </RadioButton>
                     <RadioButton Style="{StaticResource menuButton}" Tag="{StaticResource color9}" Checked="RadioButton_Checked_2">
                         <StackPanel Orientation="Horizontal">
-                            <fa:IconImage Icon="Trademark" Style="{StaticResource menuButtonIcon}"/>
+                            <fa:IconImage Icon="ClipboardCheck" Style="{StaticResource menuButtonIcon}"/>
                             <TextBlock Text="Заявки" Style="{StaticResource menuButtonText}"/>
                         </StackPanel>
                     </RadioButton>
