@@ -20,81 +20,74 @@ namespace Real_estate_agency.Pages
     /// <summary>
     /// Логика взаимодействия для AddCustomersPage.xaml
     /// </summary>
-    public partial class AddCustomersPage : Page
+    public partial class AddClientRequests : Page
     {
-        ClientsFromDB clientsFromDB = new ClientsFromDB();
-        Clients clients = new Clients();
+        ClientsRequestsFromDB clientsFromDB = new ClientsRequestsFromDB();
+        ClientRequests clients = new ClientRequests();
         int page;
-        int reqPage;
         Agents entryAgent = AuthorizationWindow.entryAgent;
-        Clients requireClient;
+        ClientRequests requireClient;
 
-        public AddCustomersPage(int choice, Clients clients, int p_page)
+        public AddClientRequests(int choice, ClientRequests clients)
         {
-            int reqPage = p_page;
             InitializeComponent();
             page = choice;
             if (page == 2)
             {
                 requireClient = clients;
-                tbName.Text = clients.Name;
-                tbLastName.Text = clients.LastName;
-                tbPhone.Text = clients.Phone;
-                tbMail.Text = clients.Email;
-                zagalovok.Text = "Редактирование клиента";
-                AddClient.Content = "Обновить";
+                tbName.Text = clients.ClientId.ToString();
+                tbLastName.Text = clients.RealtyId.ToString();
+                zagalovok.Text = "Редактирование заявки";
+                AddClientRequest.Content = "Обновить";
             }
             else
             {
                 zagalovok.Text = "Добавление клиента";
-                AddClient.Content = "Добавить";
+                AddClientRequest.Content = "Добавить";
             }
 
         }
 
-        private void AddClient_Click(object sender, RoutedEventArgs e)
+        private void AddClientRequest_Click(object sender, RoutedEventArgs e)
         {
             if (page == 1)
             {
                 try
                 {
-                    if (tbName.Text == "" || tbLastName.Text == "" || tbPhone.Text == "" || tbMail.Text == "")
+                    if (tbName.Text == "" || tbLastName.Text == "" )
                     {
                         MessageBox.Show("Необходимо заполнить все поля!");
                     }
                     else
                     {
-                        clients.Name = tbName.Text;
-                        clients.LastName = tbLastName.Text;
-                        clients.Phone = tbPhone.Text;
-                        clients.Email = tbMail.Text;
-
+                        clients.ClientId = Int32.Parse(tbName.Text);
+                        clients.RealtyId = Int32.Parse(tbLastName.Text);
                         clientsFromDB.AddNewClient(clients);
-                        NavigationService.Navigate(new CustomerDataPage());
+                        NavigationService.Navigate(new ClientRequestDataPage());
                     }
                 }
                 catch (Exception ex) { MessageBox.Show(ex.Message); }
             }
             else
             {
-                clients.Name = tbName.Text;
-                clients.LastName = tbLastName.Text;
-                clients.Phone = tbPhone.Text;
-                clients.Email = tbMail.Text;
-
-
+                clients.ClientId = Int32.Parse(tbName.Text);
+                clients.RealtyId = Int32.Parse(tbLastName.Text);
                 clients.Id = requireClient.Id;
                 clientsFromDB.UpdateClient(clients);
-                NavigationService.Navigate(new CustomerDataPage());
+                NavigationService.Navigate(new ClientRequestDataPage());
             }
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            if(reqPage == 1)
-                NavigationService.Navigate(new CustomerDataPage());
+            if (entryAgent != null)
+            {
+                NavigationService.Navigate(new ClientRequestDataPage());
+            }
             else
-                NavigationService.Navigate(new RealtyPage());
+            {
+                NavigationService.Navigate(new ClientRequestDataPage());
+            }
         }
     }
 }

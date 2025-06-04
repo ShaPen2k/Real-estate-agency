@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using static Microsoft.IO.RecyclableMemoryStreamManager;
 
 namespace Real_estate_agency.Model
 {
@@ -38,7 +39,34 @@ namespace Real_estate_agency.Model
             }
             finally { connection.Close(); }
         }
-
+        public Owners GetOwnerByPhone(string phone)
+        {
+            Owners agents = new Owners();
+            NpgsqlConnection connection = new NpgsqlConnection(DBConnect.connectionStr);
+            try
+            {
+                connection.Open();
+                string sqlExp = $"SELECT * FROM get_owner_by_phone('{phone}');";
+                NpgsqlCommand command = new NpgsqlCommand(sqlExp, connection);
+                NpgsqlDataReader reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        agents = (new Owners((int)reader[0], reader[1].ToString(), reader[2].ToString(), reader[3].ToString(), reader[4].ToString(), reader[5].ToString()));
+                    }
+                }
+                reader.Close();
+                return agents;
+            }
+            catch (NpgsqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+                return agents;
+            }
+            finally { connection.Close(); }
+        }
+        
         public void AddNewOwner(Owners owners)
         {
             NpgsqlConnection connection = new NpgsqlConnection(DBConnect.connectionStr);
@@ -147,6 +175,61 @@ namespace Real_estate_agency.Model
                 return agents;
             }
             finally { connection.Close(); }
+        }
+        public List<Realty> GetApartmentsByOwnerId(int ownerId)
+        {
+            List<Realty> apartments = new List<Realty>();
+            NpgsqlConnection connection = new NpgsqlConnection(DBConnect.connectionStr);
+            try
+            {
+                connection.Open();
+                string sqlExp = "SELECT * FROM Realty WHERE owner_id = @ownerId";
+                NpgsqlCommand command = new NpgsqlCommand(sqlExp, connection);
+                command.Parameters.AddWithValue("@ownerId", ownerId);
+                NpgsqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    apartments.Add(new Realty((int)reader[0], reader[1].ToString(), Convert.ToDouble(reader[2]), reader[3].ToString(), reader[4].ToString(), Convert.ToDouble(reader[5]), (int)reader[6], reader[7].ToString(), reader[8].ToString(), reader[9].ToString(), reader[10] == DBNull.Value ? 0 : (int)reader[10], reader[11].ToString(), reader[12].ToString()));
+                }
+                reader.Close();
+            }
+            catch (NpgsqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+            return apartments;
+        }
+
+        public Realty GetApartmentByAddress(string address)
+        {
+            Realty apartments = new Realty();
+            NpgsqlConnection connection = new NpgsqlConnection(DBConnect.connectionStr);
+            try
+            {
+                connection.Open();
+                string sqlExp = $"SELECT r.realty_id, r.realty_address, r.realty_price, rt.realty_type_text, rs.realty_status_text, r.realty_area, r.realty_rooms, o.owner_phone, r.image, r.url, r.floor, r.underground, r.residential_complex FROM realty r INNER JOIN realty_status rs ON r.realty_status_id = rs.realty_status_id INNER JOIN owners o ON r.owner_id = o.owner_id INNER JOIN realty_type rt ON r.realty_type_id = rt.realty_type_id WHERE r.realty_address = '{address}';";
+                NpgsqlCommand command = new NpgsqlCommand(sqlExp, connection);
+                command.Parameters.AddWithValue("@address", address);
+                NpgsqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    apartments = (new Realty((int)reader[0], reader[1].ToString(), Convert.ToDouble(reader[2]), reader[3].ToString(), reader[4].ToString(), Convert.ToDouble(reader[5]), (int)reader[6], reader[7].ToString(), reader[8].ToString(), reader[9].ToString(), reader[10] == DBNull.Value ? 0 : (int)reader[10], reader[11].ToString(), reader[12].ToString()));
+                }
+                reader.Close();
+            }
+            catch (NpgsqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+            return apartments;
         }
     }
 }

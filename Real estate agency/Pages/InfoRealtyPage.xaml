@@ -4,231 +4,172 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Real_estate_agency.Pages" 
-      xmlns:web="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+      xmlns:web="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf" 
+      xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="InfoRealtyPage">
 
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Для кнопки "Назад" и заголовка -->
             <RowDefinition Height="Auto"/>
-            <!-- Для верхней части с текстовой информацией -->
             <RowDefinition Height="*"/>
-            <!-- Для нижней части с изображением и картой -->
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <!-- Левая колонка для левой части информации и изображения -->
             <ColumnDefinition Width="*"/>
-            <!-- Правая колонка для правой части информации и карты -->
         </Grid.ColumnDefinitions>
 
-        <!-- Кнопка "Назад" -->
-        <Button x:Name="Back"
-                Width="50"
-                Height="50"
-                Background="Transparent"
-                BorderBrush="Transparent"
-                Margin="0,0,350,0"
-                Grid.Row="0"
-                Grid.Column="0"
-                Click="Back_Click"
-                Style="{StaticResource RoundCorner}">
-            <Image Source="../Images/previous.png"
-                   Stretch="UniformToFill"
-                   RenderOptions.BitmapScalingMode="HighQuality"/>
+        <Button x:Name="Back" Width="50" Height="50" Background="Transparent" BorderBrush="Transparent" Margin="0,0,350,0" Click="Back_Click" Style="{StaticResource RoundCorner}">
+            <Image Source="../Images/previous.png" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality"/>
         </Button>
 
-        <!-- Заголовок -->
-        <TextBlock Text="Детали недвижимости"
-                   FontSize="28"
-                   Foreground="{StaticResource titleColor1}"
-                   HorizontalAlignment="Center"
-                   Margin="10"
-                   FontWeight="ExtraBold"
-                   Grid.Row="0"
-                   Grid.ColumnSpan="2"/>
+        <TextBlock Text="{Binding Id, StringFormat=Детали недвижимости № {0}}" FontSize="28" Foreground="{StaticResource titleColor1}" HorizontalAlignment="Center" Margin="10" FontWeight="ExtraBold" Grid.Row="0" Grid.ColumnSpan="2"/>
 
-        <!-- Верхняя часть: Левая информация -->
-        <StackPanel Grid.Row="1"
-                    Grid.Column="0"
-                    Margin="10">
-            <StackPanel Orientation="Horizontal"
-                        Margin="30,0,0,10">
-                <TextBlock Text="Адрес: "
-                           FontSize="20"
-                           Foreground="{StaticResource titleColor1}"
-                           FontFamily="Bahnschrift SemiBold"
-                           FontWeight="Bold"
-                           />
-                <TextBlock Text="{Binding Address}"
-                           FontSize="20"
-                           Foreground="{StaticResource titleColor1}"
-                           FontFamily="Bahnschrift SemiBold"
-                           TextWrapping="Wrap"
-                           MaxWidth="400"
-                           LineHeight="30"
-                           />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal"
-                        Margin="40,0,0,10">
-                <TextBlock Text="Цена: "
-                           FontSize="20"
-                           Foreground="{StaticResource titleColor1}"
-                           FontFamily="Bahnschrift SemiBold"
-                           FontWeight="Bold"/>
-                <TextBlock Text="{Binding Price, StringFormat={}{0}₽}"
-                           FontSize="20"
-                           Foreground="{StaticResource titleColor1}"
-                           FontFamily="Bahnschrift SemiBold"
-                           x:Name="tbPrice"
-                           />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal"
-                        Margin="55,0,0,10">
-                <TextBlock Text="Тип: "
-                           FontSize="20"
-                           Foreground="{StaticResource titleColor1}"
-                           FontFamily="Bahnschrift SemiBold"
-                           FontWeight="Bold"/>
-                <TextBlock Text="{Binding Type}"
-                           FontSize="20"
-                           Foreground="{StaticResource titleColor1}"
-                           FontFamily="Bahnschrift SemiBold"
-                           />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal"
-                        Margin="25,0,0,10">
-                <TextBlock Text="Статус: "
-                           FontSize="20"
-                           Foreground="{StaticResource titleColor1}"
-                           FontFamily="Bahnschrift SemiBold"
-                           FontWeight="Bold"/>
-                <TextBlock Text="{Binding Status}"
-                           FontSize="20"
-                           Foreground="{StaticResource titleColor1}"
-                           FontFamily="Bahnschrift SemiBold" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal"
-                        Margin="1,0,0,10">
-                <TextBlock Text="Площадь: "
-                           FontSize="20"
-                           Foreground="{StaticResource titleColor1}"
-                           FontFamily="Bahnschrift SemiBold"
-                           FontWeight="Bold"
-                           x:Name="tbSquare"
-                           />
-                <TextBlock Text="{Binding Area, StringFormat={}{0}м²}"
-                           FontSize="20"
-                           Foreground="{StaticResource titleColor1}"
-                           FontFamily="Bahnschrift SemiBold"/>
-            </StackPanel>
-            
+        <!-- Адаптивный контейнер для иконки глаза и счетчика -->
+        <StackPanel Orientation="Horizontal" Margin="0" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right">
+            <fa:IconImage x:Name="EyeIcon" Icon="Eye" Style="{StaticResource menuButtonIcon}" Cursor="Hand" MouseLeftButtonDown="EyeIcon_Click" Foreground="MediumPurple" VerticalAlignment="Center"/>
+            <TextBlock x:Name="ViewCountText" FontSize="20" Foreground="{StaticResource titleColor1}" Margin="0,0,60,0" VerticalAlignment="Center" FontFamily="Bahnschrift SemiBold"/>
         </StackPanel>
 
-        <!-- Верхняя часть: Правая информация -->
-        <StackPanel Grid.Row="1"
-                    Grid.Column="1"
-                    Margin="10">
-            <StackPanel Orientation="Horizontal"
-            Margin="0,0,0,10">
-                <TextBlock Text="Комнаты: "
-               FontSize="20"
-               Foreground="{StaticResource titleColor1}"
-               FontFamily="Bahnschrift SemiBold"
-               FontWeight="Bold"/>
-                <TextBlock Text="{Binding Rooms}"
-               FontSize="20"
-               Foreground="{StaticResource titleColor1}"
-               FontFamily="Bahnschrift SemiBold"
-                           />
+        <!-- Левая панель -->
+        <StackPanel Grid.Row="1" Grid.Column="0" Margin="10">
+            <StackPanel Orientation="Horizontal" Margin="30,0,0,10">
+                <TextBlock Text="Адрес: " FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Address}" FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold" TextWrapping="Wrap" MaxWidth="400" LineHeight="30"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal"
-                        Margin="23,0,0,10">
-                <TextBlock Text="Номер: "
-                           FontSize="20"
-                           Foreground="{StaticResource titleColor1}"
-                           FontFamily="Bahnschrift SemiBold"
-                           FontWeight="Bold"/>
-                <TextBlock Text="{Binding OwnerPhone}"
-                           FontSize="20"
-                           Foreground="{StaticResource titleColor1}"
-                           FontFamily="Bahnschrift SemiBold" />
+            <StackPanel Orientation="Horizontal" Margin="40,0,0,10">
+                <TextBlock Text="Цена: " FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Price, StringFormat={}{0}₽}" FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold" x:Name="tbPrice"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal"
-                        Margin="13,0,0,10">
-                <TextBlock Text="Ссылка: "
-                           FontSize="20"
-                           Foreground="{StaticResource titleColor1}"
-                           FontFamily="Bahnschrift SemiBold"
-                           FontWeight="Bold"/>
+            <StackPanel Orientation="Horizontal" Margin="55,0,0,10">
+                <TextBlock Text="Тип: " FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Type}" FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="25,0,0,10">
+                <TextBlock Text="Статус: " FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Status}" FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="1,0,0,10">
+                <TextBlock Text="Площадь: " FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold" FontWeight="Bold" x:Name="tbSquare"/>
+                <TextBlock Text="{Binding Area, StringFormat={}{0}м²}" FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Правая панель -->
+        <StackPanel Grid.Row="1" Grid.Column="1" Margin="10">
+            <StackPanel Orientation="Horizontal" Margin="15,0,0,10">
+                <TextBlock Text="Комнаты: " FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Rooms}" FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <TextBlock Text="Тел. номер: " FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold" FontWeight="Bold"/>
+                <TextBlock x:Name="tbPhone">
+                    <Hyperlink NavigateUri="{Binding OwnerPhone}" x:Name="hipLink" RequestNavigate="Hyperlink_RequestNavigate_1" FontSize="20" FontFamily="Bahnschrift SemiBold" FontWeight="Bold" Foreground="{DynamicResource titleColor1}">
+                        <Run Text="{Binding OwnerPhone}"/>
+                    </Hyperlink>
+                </TextBlock>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="28,0,0,10">
+                <TextBlock Text="Ссылка: " FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold" FontWeight="Bold"/>
                 <TextBlock>
-                    <Hyperlink NavigateUri="{Binding Url}"
-                               RequestNavigate="Hyperlink_RequestNavigate" FontSize="20" FontFamily="Bahnschrift SemiBold" FontWeight="Bold">
+                    <Hyperlink NavigateUri="{Binding Url}" RequestNavigate="Hyperlink_RequestNavigate" FontSize="20" FontFamily="Bahnschrift SemiBold" FontWeight="Bold">
                         <Run Text="{Binding Url}"/>
                     </Hyperlink>
-                </TextBlock >
+                </TextBlock>
             </StackPanel>
-            <StackPanel Orientation="Horizontal"
-                        Margin="34,0,0,10">
-                <TextBlock Text="Этаж: "
-                           FontSize="20"
-                           Foreground="{StaticResource titleColor1}"
-                           FontFamily="Bahnschrift SemiBold"
-                           FontWeight="Bold"/>
-                <TextBlock Text="{Binding Floor}"
-                           FontSize="20"
-                           Foreground="{StaticResource titleColor1}"
-                           FontFamily="Bahnschrift SemiBold"/>
+            <StackPanel Orientation="Horizontal" Margin="49,0,0,10">
+                <TextBlock Text="Этаж: " FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Floor}" FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal"
-                        Margin="24,0,0,10">
-                <TextBlock Text="Метро: "
-                           FontSize="20"
-                           Foreground="{StaticResource titleColor1}"
-                           FontFamily="Bahnschrift SemiBold"
-                           FontWeight="Bold"/>
-                <TextBlock Text="{Binding Underground}"
-                           FontSize="20"
-                           Foreground="{StaticResource titleColor1}"
-                           FontFamily="Bahnschrift SemiBold"/>
+            <StackPanel Orientation="Horizontal" Margin="39,0,0,10">
+                <TextBlock Text="Метро: " FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Underground}" FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal"
-                        Margin="48,0,0,10">
-                <TextBlock Text="ЖК: "
-                           FontSize="20"
-                           Foreground="{StaticResource titleColor1}"
-                           FontFamily="Bahnschrift SemiBold"
-                           FontWeight="Bold"/>
-                <TextBlock Text="{Binding Residential_conplex}"
-                           FontSize="20"
-                           Foreground="{StaticResource titleColor1}"
-                           FontFamily="Bahnschrift SemiBold"/>
+            <StackPanel Orientation="Horizontal" Margin="63,0,0,10">
+                <TextBlock Text="ЖК: " FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Residential_conplex}" FontSize="20" Foreground="{StaticResource titleColor1}" FontFamily="Bahnschrift SemiBold"/>
             </StackPanel>
         </StackPanel>
 
-        <!-- Нижняя часть: Изображение -->
-        <Rectangle
-                   RadiusX="25"
-                   RadiusY="25"
-                   RenderOptions.BitmapScalingMode="HighQuality"
-                   Grid.Row="1"
-                   Grid.Column="0"
-                   Margin="10,214,10,0" Grid.RowSpan="2">
+        <!-- Изображение -->
+        <Rectangle RadiusX="25" RadiusY="25" RenderOptions.BitmapScalingMode="HighQuality" Grid.Row="1" Grid.Column="0" Margin="10,214,10,0" Grid.RowSpan="2">
             <Rectangle.Fill>
-                <ImageBrush ImageSource="{Binding Image}"
-                            Stretch="Fill"
-                            RenderOptions.BitmapScalingMode="HighQuality"/>
+                <ImageBrush ImageSource="{Binding Image}" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality"/>
             </Rectangle.Fill>
         </Rectangle>
-        
-        <!-- Нижняя часть: WebView для карты Yandex -->
-        <web:WebView2 x:Name="MapWebView"
-                      Grid.Row="1"
-                      Grid.Column="1"
-                      Margin="10,205,10,0" Grid.RowSpan="2"/>
+
+        <web:WebView2 x:Name="MapWebView" Grid.Row="1" Grid.Column="1" Margin="10,205,10,0" Grid.RowSpan="2"/>
+
+        <Popup x:Name="ClientsPopup"
+               PlacementTarget="{Binding ElementName=EyeIcon}"
+               Placement="Bottom"
+               AllowsTransparency="True"
+               StaysOpen="False"
+               HorizontalOffset="0"
+               VerticalOffset="5">
+            <Border Background="White"
+                    BorderBrush="#CCC"
+                    BorderThickness="1"
+                    Padding="10"
+                    Width="300"
+                    MaxHeight="300"
+                    CornerRadius="10">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="Просмотревшие клиенты"
+                                   FontSize="18"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource titleColor1}"
+                                   Margin="0,0,0,10"
+                                   FontFamily="Bahnschrift SemiBold"/>
+                        <TextBlock x:Name="NoViewsText"
+                                   Visibility="Collapsed"
+                                   FontSize="14"
+                                   Foreground="Gray"
+                                   Text="Нет просмотров"
+                                   FontFamily="Bahnschrift SemiBold"
+                                   Margin="0,5"/>
+                        <ListBox x:Name="ClientsListBox"
+         Visibility="Visible"
+         Width="260"
+         Background="Transparent"
+         BorderThickness="0"
+         ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Focusable" Value="False"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListBoxItem">
+                                                <ContentPresenter/>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Margin="0,5"
+                                               FontSize="16"
+                                               Foreground="{StaticResource titleColor1}"
+                                               FontFamily="Bahnschrift SemiBold">
+                                        <Hyperlink PreviewMouseLeftButtonDown="Hyperlink_PreviewMouseLeftButtonDown" Foreground="{DynamicResource titleColor1}">
+                                            <Run Text="{Binding Name}"/>
+                                            <Run Text=" "/>
+                                            <Run Text="{Binding LastName}"/>
+                                        </Hyperlink>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Popup>
     </Grid>
 </Page>

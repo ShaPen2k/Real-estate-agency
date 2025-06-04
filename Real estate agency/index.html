@@ -170,14 +170,15 @@
         <div class="relative p-6 border w-full max-w-md shadow-2xl rounded-xl bg-white transform transition-all duration-300 scale-95 modal-content">
             <div class="text-center">
                 <h3 class="text-xl font-semibold text-gray-900">Связаться с нами
-                <form id="contact-form" class="mt-4" action="submit_contact.php" method="POST">
-                    <input type="text" name="name" placeholder="Имя" class="w-full px-4 py-3 mt-3 border rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200" required>
-                    <input type="text" name="surname" placeholder="Фамилия" class="w-full px-4 py-3 mt-3 border rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200" required>
-                    <input type="tel" name="phone" placeholder="Телефон: 89519713859" class="w-full px-4 py-3 mt-3 border rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200" required>
-                    <input type="email" name="email" placeholder="Email" class="w-full px-4 py-3 mt-3 border rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200" required>
-                    <button type="submit" class="mt-6 w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105">Отправить</button>
+                    <form id="contact-form" class="mt-4" action="submit_contact.php" method="POST">
+                        <input type="text" name="name" placeholder="Имя" class="w-full px-4 py-3 mt-3 border rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200" required>
+                        <input type="text" name="surname" placeholder="Фамилия" class="w-full px-4 py-3 mt-3 border rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200" required>
+                        <input type="tel" name="phone" placeholder="Телефон: 89519713859" class="w-full px-4 py-3 mt-3 border rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200" required>
+                        <input type="email" name="email" placeholder="Email" class="w-full px-4 py-3 mt-3 border rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200" required>
+                        <input type="hidden" id="realty-id" name="realty_id">
+                        <button type="submit" class="mt-6 w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105">Отправить</button>
+                    </form>
                 </h3>
-                </form>
                 <button id="close-modal" class="absolute top-0 right-0 mt-4 mr-4 text-gray-500 hover:text-gray-700 transition-colors duration-200">✕</button>
             </div>
         </div>
@@ -197,22 +198,23 @@
             const apartmentList = document.getElementById('apartment-list');
             apartmentList.innerHTML = '';
 
-            pageApartments.forEach(apartment => {
-                const card = document.createElement('div');
-                card.className = 'bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl';
-                card.innerHTML = `
-                    <img src="${apartment.image ? `/Images/Realty/${apartment.image}` : 'https://via.placeholder.com/300x200'}" alt="${apartment.realty_rooms}-комнатная ${apartment.realty_type_name}" class="w-full h-56 object-cover">
-                    <div class="p-6">
-                        <h3 class="text-2xl font-semibold text-gray-800">${apartment.realty_rooms}-комнатная ${apartment.realty_type_name}</h3>
-                        <p class="text-gray-600 mt-2">${apartment.realty_address}</p>
-                        <p class="text-blue-600 font-bold mt-4 text-xl">${new Intl.NumberFormat('ru-RU').format(apartment.realty_price)} ₽</p>
-                        <h3 class="text-xl font-semibold text-gray-900">
-                        <button type="button" class="contact-button block mt-6 w-full text-center bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105">Связаться</button>
-                        </h3>
-                    </div>
-                `;
-                apartmentList.appendChild(card);
-            });
+                    pageApartments.forEach(apartment => {
+                        const card = document.createElement('div');
+                        card.className = 'apartment-card bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl';
+                        card.dataset.realtyId = apartment.realty_id;
+                        card.innerHTML = `
+                            <img src="${apartment.image ? `/Images/Realty/${apartment.image}` : 'https://via.placeholder.com/300x200'}" alt="${apartment.realty_rooms}-комнатная ${apartment.realty_type_name}" class="w-full h-56 object-cover">
+                            <div class="p-6">
+                                <h3 class="text-2xl font-semibold text-gray-800">${apartment.realty_rooms}-комнатная ${apartment.realty_type_name}</h3>
+                                <p class="text-gray-600 mt-2">${apartment.realty_address}</p>
+                                <p class="text-blue-600 font-bold mt-4 text-xl">${new Intl.NumberFormat('ru-RU').format(apartment.realty_price)} ₽</p>
+                                <h3 class="text-xl font-semibold text-gray-900">
+                                <button type="button" class="contact-button block mt-6 w-full text-center bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105">Связаться</button>
+                                </h3>
+                            </div>
+                        `;
+                        apartmentList.appendChild(card);
+                    });
 
             // Счётчик страниц карусел
             document.getElementById('page-info').textContent = `${page} из ${totalPages}`;
@@ -222,17 +224,20 @@
             document.getElementById('next-button').disabled = page === totalPages;
 
             // Определние кнопок "Связаться"
-            const contactButtons = document.querySelectorAll('.contact-button');
-            contactButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const contactModal = document.querySelector('#contact-modal');
-                    contactModal.classList.remove('opacity-0', 'pointer-events-none');
-                    contactModal.classList.add('opacity-100');
-                    const modalContent = contactModal.querySelector('.modal-content');
-                    modalContent.classList.remove('scale-95');
-                    modalContent.classList.add('scale-100');
-                });
-            });
+                    const contactButtons = document.querySelectorAll('.contact-button');
+                    contactButtons.forEach(button => {
+                        button.addEventListener('click', () => {
+                            const card = button.closest('.apartment-card');
+                            const realtyId = card.dataset.realtyId;
+                            document.getElementById('realty-id').value = realtyId; // Устанавливаем ID недвижимости в форму
+                            const contactModal = document.querySelector('#contact-modal');
+                            contactModal.classList.remove('opacity-0', 'pointer-events-none');
+                            contactModal.classList.add('opacity-100');
+                            const modalContent = contactModal.querySelector('.modal-content');
+                            modalContent.classList.remove('scale-95');
+                            modalContent.classList.add('scale-100');
+                        });
+});
         }
 
         // Функция для загрузки недвижимости в карсуль

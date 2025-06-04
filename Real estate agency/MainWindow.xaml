@@ -59,12 +59,12 @@
                             <TextBlock Text="Сделки" Style="{StaticResource menuButtonText}"/>
                         </StackPanel>
                     </RadioButton>
-                    <!--<RadioButton Style="{StaticResource menuButton}" Tag="{StaticResource color9}" Checked="Demands_Checked">
+                    <RadioButton Style="{StaticResource menuButton}" Tag="{StaticResource color9}" Checked="RadioButton_Checked_2">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="Trademark" Style="{StaticResource menuButtonIcon}"/>
-                            <TextBlock Text="Пожелания" Style="{StaticResource menuButtonText}"/>
+                            <TextBlock Text="Заявки" Style="{StaticResource menuButtonText}"/>
                         </StackPanel>
-                    </RadioButton>-->
+                    </RadioButton>
                     <RadioButton x:Name="Customers" Style="{StaticResource menuButton}" Tag="{StaticResource color2}" Checked="Customers_Checked">
                         <StackPanel Orientation="Horizontal">
                             <fa:IconImage Icon="UserGroup" Style="{StaticResource menuButtonIcon}"/>

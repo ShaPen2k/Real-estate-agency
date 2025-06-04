@@ -50,7 +50,7 @@ namespace Real_estate_agency.Pages
                 { 
                     // Получаем сотрудника из параметра команды
                     Clients clients = new Clients();
-                    NavigationService.Navigate(new AddCustomersPage(1, clients));
+                    NavigationService.Navigate(new AddCustomersPage(1, clients, 1));
                 }
                 
             }
@@ -92,7 +92,7 @@ namespace Real_estate_agency.Pages
                     Clients client = button.CommandParameter as Clients;
                     if (client != null)
                     {
-                        NavigationService.Navigate(new AddCustomersPage(2, client));
+                        NavigationService.Navigate(new AddCustomersPage(2, client, 1));
                     }
                 }
             }

@@ -25,11 +25,13 @@ namespace Real_estate_agency.Pages
         OwnersFromDB ownersFromDB = new OwnersFromDB();
         Owners owners = new Owners();
         int page;
+        int reqPage;
         Owners requireOwner;
         Agents entryAgent = AuthorizationWindow.entryAgent;
-        public AddOwnerPage(int choice, Owners owner)
+        public AddOwnerPage(int choice, Owners owner, int p_page)
         {
             InitializeComponent();
+            reqPage = p_page;
             page = choice;
             if (page == 2)
             {
@@ -90,15 +92,10 @@ namespace Real_estate_agency.Pages
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            if (entryAgent != null)
-            {
-                NavigationService.Navigate(new OwnersPage());
-
-            }
-            else
-            {
+            if(reqPage == 1)
                 NavigationService.Navigate(new OwnerDataPage());
-            }
+            else
+                NavigationService.Navigate(new RealtyPage());
         }
     }
 }

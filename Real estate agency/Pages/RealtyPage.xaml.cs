@@ -233,7 +233,7 @@ namespace Real_estate_agency.Pages
         {
             if (sender is Button button && button.CommandParameter is Realty realty)
             {
-                NavigationService.Navigate(new InfoRealtyPage(realty));
+                NavigationService.Navigate(new InfoRealtyPage(realty, 1));
             }
         }
 

@@ -42,7 +42,7 @@ namespace Real_estate_agency.Pages
         {
             if (sender is Button button && button.DataContext is Clients client)
             {
-                NavigationService.Navigate(new AddCustomersPage(2, client));
+                NavigationService.Navigate(new AddCustomersPage(2, client, 1));
             }
         }
 
@@ -51,7 +51,7 @@ namespace Real_estate_agency.Pages
             if (sender is Button button)
             {
                 Clients client = new Clients();
-                NavigationService.Navigate(new AddCustomersPage(1, client));
+                NavigationService.Navigate(new AddCustomersPage(1, client, 1));
             }
         }
 

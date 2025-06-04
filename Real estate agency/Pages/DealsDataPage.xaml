@@ -33,13 +33,14 @@
 
         <DataGrid x:Name="dataGrid" AutoGenerateColumns="False" Margin="10,55,10,10" CanUserAddRows="False" IsReadOnly="True" BorderThickness="0">
             <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="40" />
                 <DataGridTextColumn Header="Владелец" Binding="{Binding CombinedOwner}" Width="*"/>
                 <DataGridTextColumn Header="Телефон владельца" Binding="{Binding OwnerPhone}" Width="*"/>
                 <DataGridTextColumn Header="Клиент" Binding="{Binding CombinedClient}" Width="*"/>
                 <DataGridTextColumn Header="Телефон клиента" Binding="{Binding ClientPhone}" Width="*"/>
                 <DataGridTextColumn Header="Агент" Binding="{Binding CombinedAgent}" Width="*"/>
                 <DataGridTextColumn Header="Телефон агента" Binding="{Binding AgentPhone}" Width="*"/>
-                <DataGridTextColumn Header="Дата сделки" Binding="{Binding DealDate}" Width="*"/>
+                <DataGridTextColumn Header="Дата сделки" Binding="{Binding DealDate, StringFormat=dd.MM.yyyy}" Width="*"/>
                 <DataGridTextColumn Header="Итоговая цена" Binding="{Binding DealCost, StringFormat='{}{0}₽'}" Width="*"/>
 
                 <DataGridTemplateColumn Header="" Width="40">

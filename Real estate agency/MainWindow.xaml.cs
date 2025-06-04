@@ -129,5 +129,10 @@ namespace Real_estate_agency
             appRes.MergedDictionaries.Add(dark);
             tbTema.Text = "Тёмная тема";
         }
+
+        private void RadioButton_Checked_2(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Navigate(new ClientRequestDataPage());
+        }
     }
 }

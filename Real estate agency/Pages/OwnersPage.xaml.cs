@@ -48,7 +48,7 @@ namespace Real_estate_agency.Pages
                     Owners owner = button.CommandParameter as Owners;
                     if (owner != null)
                     {
-                        NavigationService.Navigate(new AddOwnerPage(2, owner));
+                        NavigationService.Navigate(new AddOwnerPage(2, owner, 1));
                     }
                 }
 
@@ -93,7 +93,7 @@ namespace Real_estate_agency.Pages
                  else
                 {
                     Owners owners = new Owners();
-                    NavigationService.Navigate(new AddOwnerPage(1, owners));
+                    NavigationService.Navigate(new AddOwnerPage(1, owners, 1));
                 }
             }
         }

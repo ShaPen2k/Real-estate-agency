@@ -33,8 +33,30 @@
 
         <DataGrid x:Name="dataGrid" AutoGenerateColumns="False" Margin="10,55,10,10" CanUserAddRows="False" IsReadOnly="True" BorderThickness="0">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*"/>
-                <DataGridTextColumn Header="Фамилия" Binding="{Binding LastName}" Width="*"/>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="40" />
+                <DataGridTemplateColumn Header="Имя" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock>
+                            <Hyperlink Click="OwnerNameHyperlink_Click" Foreground="{DynamicResource titleColor1}" TextDecorations="Underline">
+                                <Run Text="{Binding Name}"/>
+                            </Hyperlink>
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Фамилия" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock>
+                            <Hyperlink Click="OwnerNameHyperlink_Click" Foreground="{DynamicResource titleColor1}" TextDecorations="Underline">
+                                <Run Text="{Binding LastName}"/>
+                            </Hyperlink>
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Телефон" Binding="{Binding Phone}" Width="*"/>
                 <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*"/>
 
@@ -54,5 +76,49 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+        <Popup x:Name="OwnerApartmentsPopup" Placement="Mouse" AllowsTransparency="True" StaysOpen="False">
+            <Border Background="White" BorderBrush="#CCC" BorderThickness="1" Padding="10" Width="450" MaxHeight="300" CornerRadius="10">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Адреса недвижимости" FontSize="18" FontWeight="Bold" Foreground="{StaticResource titleColor1}" Margin="0,0,0,10" FontFamily="Bahnschrift SemiBold"/>
+                    <TextBlock x:Name="NoApartmentsText" Visibility="Collapsed" FontSize="14" Foreground="Gray" Text="Нет квартир" FontFamily="Bahnschrift SemiBold" Margin="0,5"/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Height="200">
+                        <ListBox x:Name="ApartmentsListBox"
+             Visibility="Visible"
+             Width="450"
+             Background="Transparent"
+             BorderThickness="0"
+             ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Focusable" Value="False"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListBoxItem">
+                                                <ContentPresenter/>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Margin="0,5"
+                           FontSize="16"
+                           Foreground="{StaticResource titleColor1}"
+                           FontFamily="Bahnschrift SemiBold">
+                    <Hyperlink PreviewMouseLeftButtonDown="Hyperlink_PreviewMouseLeftButtonDown"
+                               Foreground="{DynamicResource titleColor1}">
+                        <Run Text="{Binding Address}"/>
+                    </Hyperlink>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
+        </Popup>
     </Grid>
 </Page>

@@ -27,6 +27,8 @@ namespace Real_estate_agency.Pages
         OwnersFromDB ownersFromDB = new OwnersFromDB();
 
         Agents entryAgent = AuthorizationWindow.entryAgent;
+
+        Realty realty = new Realty();
         public OwnerDataPage()
         {
             InitializeComponent();
@@ -58,7 +60,7 @@ namespace Real_estate_agency.Pages
                 Owners owner = button.DataContext as Owners;
                 if (owner != null)
                 {
-                    NavigationService.Navigate(new AddOwnerPage(2, owner));
+                    NavigationService.Navigate(new AddOwnerPage(2, owner, 1));
                 }
             }
         }
@@ -74,8 +76,44 @@ namespace Real_estate_agency.Pages
             if (sender is Button button)
             {
                 Owners owner = new Owners();
-                NavigationService.Navigate(new AddOwnerPage(1, owner));
+                NavigationService.Navigate(new AddOwnerPage(1, owner, 1));
             }
+        }
+        private void OwnerNameHyperlink_Click(object sender, RoutedEventArgs e)
+        {
+            Hyperlink hyperlink = sender as Hyperlink;
+            if (hyperlink != null)
+            {
+                Owners owner = hyperlink.DataContext as Owners;
+                if (owner != null)
+                {
+                    int ownerId = owner.Id;
+                    List<Realty> apartments = ownersFromDB.GetApartmentsByOwnerId(ownerId);
+                    if (apartments.Any())
+                    {
+                        ApartmentsListBox.ItemsSource = apartments;
+                        NoApartmentsText.Visibility = Visibility.Collapsed;
+                        ApartmentsListBox.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        ApartmentsListBox.ItemsSource = null;
+                        NoApartmentsText.Visibility = Visibility.Visible;
+                        ApartmentsListBox.Visibility = Visibility.Collapsed;
+                    }
+                    OwnerApartmentsPopup.IsOpen = true;
+                }
+            }
+        }
+        private void Hyperlink_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Hyperlink hyperlink && hyperlink.Inlines.FirstInline is Run run)
+            {
+                string address = run.Text;
+                realty = ownersFromDB.GetApartmentByAddress(address);
+                NavigationService.Navigate(new InfoRealtyPage(realty, 3));
+            }
+            e.Handled = true;
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using static Microsoft.IO.RecyclableMemoryStreamManager;
 
 namespace Real_estate_agency.Model
 {
@@ -104,6 +105,48 @@ namespace Real_estate_agency.Model
                                     reader[11].ToString(),         // underground
                                     reader[12].ToString()          // residential_complex
                                 ));
+                            }
+                        }
+                    }
+                }
+                catch (NpgsqlException ex)
+                {
+                    MessageBox.Show($"Ошибка базы данных: {ex.Message}");
+                }
+            }
+            return realties;
+        }
+
+        public Realty GetRealtyById(int RealtyId)
+        {
+            Realty realties = new Realty();
+            using (var connection = new NpgsqlConnection(DBConnect.connectionStr))
+            {
+                try
+                {
+                    connection.Open();
+                    string sql = $"SELECT * FROM get_realty_by_id({RealtyId});";
+                    using (var command = new NpgsqlCommand(sql, connection))
+                    {
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                realties = new Realty(
+                                    (int)reader[0],                 // realty_id
+                                    reader[1].ToString(),          // realty_address
+                                    Convert.ToDouble(reader[2]),    // realty_price
+                                    reader[3].ToString(),          // realty_type
+                                    reader[4].ToString(),          // realty_status_text
+                                    Convert.ToDouble(reader[5]),    // realty_area
+                                    (int)reader[6],                // realty_rooms
+                                    reader[7].ToString(),          // owner_phone
+                                    reader[8].ToString(),          // image
+                                    reader[9].ToString(),          // url
+                                    (int)reader[10],               // floor
+                                    reader[11].ToString(),         // underground
+                                    reader[12].ToString()          // residential_complex
+                                );
                             }
                         }
                     }
@@ -417,6 +460,59 @@ namespace Real_estate_agency.Model
                 return agents;
             }
             finally { connection.Close(); }
+        }
+
+        public List<ViewedClients> GetClientsWhoViewedRealty(int realtyId)
+        {
+            List<ViewedClients> clients = new List<ViewedClients>();
+            using (var connection = new NpgsqlConnection(DBConnect.connectionStr))
+            {
+                try
+                {
+                    connection.Open();
+                    string sql = @"
+                SELECT c.client_id, c.client_firstname, c.client_lastname
+                FROM clients c
+                JOIN client_requests cr ON c.client_id = cr.client_id
+                WHERE cr.realty_id = @realtyId
+            ";
+                    using (var command = new NpgsqlCommand(sql, connection))
+                    {
+                        command.Parameters.AddWithValue("@realtyId", realtyId);
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                clients.Add(new ViewedClients((int)reader[0], reader[1].ToString(), reader[2].ToString()));
+                            }
+                        }
+                    }
+                }
+                catch (NpgsqlException ex)
+                {
+                    MessageBox.Show($"Ошибка базы данных: {ex.Message}");
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+            return clients;
+        }
+
+        // Новый метод для получения количества просмотров
+        public int GetViewCount(int realtyId)
+        {
+            using (var connection = new NpgsqlConnection(DBConnect.connectionStr))
+            {
+                connection.Open();
+                string sql = "SELECT COUNT(*) FROM client_requests WHERE realty_id = @realtyId";
+                using (var command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@realtyId", realtyId);
+                    return Convert.ToInt32(command.ExecuteScalar());
+                }
+            }
         }
     }
 }
