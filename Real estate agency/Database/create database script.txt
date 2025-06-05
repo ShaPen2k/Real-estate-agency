@@ -1,0 +1,2017 @@
+create table clients
+(
+	client_id serial primary key,
+	client_firstname varchar(60) not null,
+	client_lastname varchar(60) not null, 
+	client_phone char(11) not null,
+	client_email varchar(100),
+	image text default 'user.png'
+);
+
+INSERT INTO clients (client_firstname, client_lastname, client_phone, client_email, image) VALUES
+('Иван', 'Иванов', '89123456701', 'ivan.ivanov@example.com','client8.jpg'),
+('Петр', 'Петров', '89234567812', 'petr.petrov@example.com','client2.jpg'),
+('Светлана', 'Сидорова', '89345678923', 'svetlana.sidorova@example.com','client3.jpg'),
+('Алексей', 'Алексеев', '89456789034', 'aleksey.alekseyev@example.com','client4.jpg'),
+('Мария', 'Маркова', '89567890145', 'maria.markova@example.com','client5.jpg'),
+('Дмитрий', 'Дмитриев', '89678901256', 'dmitriy.dmitriev@example.com','client6.jpg'),
+('Елена', 'Еленина', '89789012367', 'elena.elenina@example.com','client7.jpg'),
+('Анастасия', 'Анастасиева', '89890123478', 'anastasia.anastasievea@example.com','client1.jpg'),
+('Вознесенский', 'Вознесенский', '89901234589', 'vozn.senskiy@example.com','client9.jpg'),
+('Артем', 'Артемьев', '89012345600', 'artem.artemiev@example.com','client10.jpg');
+
+CREATE OR REPLACE PROCEDURE add_client (
+  p_client_id INT,
+  p_client_firstname VARCHAR(60),
+  p_client_lastname VARCHAR(60),
+  p_client_phone CHAR(11),
+  p_client_email VARCHAR(100),
+  p_image TEXT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO clients (
+      client_id,
+      client_firstname,
+      client_lastname, 
+      client_phone,
+      client_email,
+      image
+    ) VALUES (
+      p_client_id,
+      p_client_firstname, 
+      p_client_lastname, 
+      p_client_phone, 
+      p_client_email, 
+      p_image
+    );
+END $$;
+
+CREATE OR REPLACE FUNCTION list_clients_sorted_by_id() 
+RETURNS TABLE (
+    client_id INT,
+    client_firstname VARCHAR(60),
+    client_lastname VARCHAR(60),
+    client_phone CHAR(11),
+    client_email VARCHAR(100),
+    image TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT *
+    FROM clients
+    ORDER BY client_id ASC;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT * FROM list_clients_sorted_by_id();
+
+CREATE OR REPLACE PROCEDURE update_client (
+    p_client_id int,
+    p_firstname text, 
+    p_lastname text, 
+    p_phone text, 
+    p_email text
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE clients
+    SET
+        client_firstname = COALESCE(p_firstname, client_firstname),
+        client_lastname = COALESCE(p_lastname, client_lastname),
+        client_phone = COALESCE(p_phone, client_phone),
+        client_email = COALESCE(p_email, client_email)
+    WHERE client_id = p_client_id;
+END $$;
+
+CREATE OR REPLACE PROCEDURE delete_client_by_id(client_id_to_delete INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM clients WHERE client_id = client_id_to_delete;
+END $$;
+
+CREATE OR REPLACE FUNCTION search_clients_by_last_name(last_name_search VARCHAR)
+RETURNS TABLE (
+    client_id INT,
+    client_firstname VARCHAR,
+    client_lastname VARCHAR,
+    client_phone CHAR(11),
+    client_email VARCHAR,
+    image TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+        SELECT *
+        FROM clients
+        WHERE clients.client_lastname ILIKE '%' || last_name_search || '%'
+		ORDER BY clients.client_id ASC;
+END;
+$$ LANGUAGE plpgsql;
+
+
+create table owners
+(
+	owner_id serial primary key,
+	owner_firstname varchar(60) not null,
+	owner_lastname varchar(60) not null, 
+	owner_phone char(11) not null,
+	owner_email varchar(100) not null,
+	image text
+);
+INSERT INTO owners (owner_firstname, owner_lastname, owner_phone, owner_email, image) VALUES
+('Анна', 'Смирнова', '89161234567', 'anna.smirnova@example.com','owner1.jpg'),
+('Игорь', 'Кузнецов', '89272345678', 'igor.kuznetsov@example.com','owner2.jpg'),
+('Ольга', 'Васильева', '89383456789', 'olga.vasilyeva@example.com','owner3.jpg'),
+('Сергей', 'Петинов', '89494567890', 'sergey.petinov@example.com','owner4.jpg'),
+('Юлия', 'Лебедева', '89505678901', 'yulia.lebedeva@example.com','owner5.jpg'),
+('Кирилл', 'Морозов', '89616789012', 'kirill.morozov@example.com','owner6.jpg'),
+('Наталья', 'Федорова', '89727890123', 'natalya.fedorova@example.com','owner7.jpg'),
+('Александр', 'Тимофеев', '89838901234', 'alexander.timofeev@example.com','owner8.jpg'),
+('Евгения', 'Коваленко', '89949012345', 'evgeniya.kovalenko@example.com','owner.jpg'),
+('Павел', 'Григорьев', '89051234567', 'pavel.grigoriev@example.com','owner.jpg'),
+-- Мужчины (первые 20 записей)
+('Алексей', 'Абакумов', '89051234568', 'alexei.abakumov@example.com', 'owner.jpg'),
+('Алеша', 'Абдулов', '89051234569', 'alesha.abdulov@example.com', 'owner.jpg'),
+('Анатолий', 'Абрамов', '89051234570', 'anatoly.abramov@example.com', 'owner.jpg'),
+('Арсений', 'Агапов', '89051234571', 'arseniy.agapov@example.com', 'owner.jpg'),
+('Борис', 'Агафонов', '89051234572', 'boris.agafonov@example.com', 'owner.jpg'),
+('Даниил', 'Алексеев', '89051234573', 'daniil.alexeyev@example.com', 'owner.jpg'),
+('Доминик', 'Андреев', '89051234574', 'dominik.andreyev@example.com', 'owner.jpg'),
+('Фёдор', 'Антонов', '89051234575', 'fyodor.antonov@example.com', 'owner.jpg'),
+('Гавриил', 'Арсеньев', '89051234576', 'gavriil.arsenyev@example.com', 'owner.jpg'),
+('Геннадий', 'Артёмов', '89051234577', 'gennady.artemov@example.com', 'owner.jpg'),
+('Григорий', 'Алексеев', '89051234578', 'grigory.alexeyev@example.com', 'owner.jpg'),
+('Иосиф', 'Ангелов', '89051234579', 'iosif.angeloff@example.com', 'owner.jpg'),
+('Лев', 'Аистов', '89051234580', 'lev.aistov@example.com', 'owner.jpg'),
+('Лука', 'Алатырцев', '89051234581', 'luka.alatyrtsev@example.com', 'owner.jpg'),
+('Максимилиан', 'Архангельский', '89051234582', 'maksimilian.arhangelsky@example.com', 'owner.jpg'),
+('Марат', 'Асланов', '89051234583', 'marat.aslanov@example.com', 'owner.jpg'),
+('Матвей', 'Андреев', '89051234584', 'matvey.andreev@example.com', 'owner.jpg'),
+('Михаил', 'Барышев', '89051234585', 'mikhail.baryshev@example.com', 'owner.jpg'),
+('Николай', 'Басов', '89051234586', 'nikolai.basov@example.com', 'owner.jpg'),
+('Олег', 'Беляев', '89051234587', 'oleg.belyaev@example.com', 'owner.jpg'),
+-- Женщины (следующие 20 записей)
+('Динара', 'Белова', '89051234588', 'dinara.belova@example.com', 'owner.jpg'),
+('Доминика', 'Бабанина', '89051234589', 'dominika.babanina@example.com', 'owner.jpg'),
+('Доротея', 'Балабанова', '89051234590', 'doroteya.balabanova@example.com', 'owner.jpg'),
+('Ева', 'Балакина', '89051234591', 'eva.balakina@example.com', 'owner.jpg'),
+('Фаина', 'Балакирева', '89051234592', 'faina.balakireva@example.com', 'owner.jpg'),
+('Феодора', 'Баландина', '89051234593', 'feodora.balandina@example.com', 'owner.jpg'),
+('Галина', 'Баранова', '89051234594', 'galina.baranova@example.com', 'owner.jpg'),
+('Инга', 'Баринова', '89051234595', 'inga.barinova@example.com', 'owner.jpg'),
+('Иннесса', 'Бельская', '89051234596', 'innessa.belskaya@example.com', 'owner.jpg'),
+('Инна', 'Бабина', '89051234597', 'inna.babina@example.com', 'owner.jpg'),
+('Карина', 'Бочарова', '89051234598', 'karina.bocharova@example.com', 'owner.jpg'),
+('Кира', 'Борисюкова', '89051234599', 'kira.borisyukova@example.com', 'owner.jpg'),
+('Клара', 'Боровкова', '89051234600', 'klara.borovkova@example.com', 'owner.jpg'),
+('Ксана', 'Бородина', '89051234601', 'ksana.borodina@example.com', 'owner.jpg'),
+('Лада', 'Бортникова', '89051234602', 'lada.bortnikova@example.com', 'owner.jpg'),
+('Лариса', 'Борцова', '89051234603', 'larisa.bortsova@example.com', 'owner.jpg'),
+('Любовь', 'Бугрова', '89051234604', 'lyubov.bugrova@example.com', 'owner.jpg'),
+('Люда', 'Бычкова', '89051234605', 'luda.bychkova@example.com', 'owner.jpg'),
+('Маня', 'Чабанова', '89051234606', 'manya.chabanova@example.com', 'owner.jpg'),
+('Маргарита', 'Чернова', '89051234607', 'margarita.chernova@example.com', 'owner.jpg');
+
+CREATE OR REPLACE FUNCTION get_owner_id_by_phone(phone_number CHAR(11))
+RETURNS INT AS $$
+BEGIN
+    RETURN (
+        SELECT owner_id
+        FROM owners
+        WHERE owner_phone = phone_number
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT get_owner_id_by_phone('89161234567');
+
+CREATE OR REPLACE FUNCTION list_owners_sorted_by_id() 
+RETURNS TABLE (
+    owner_id INT,
+    owner_firstname VARCHAR(60),
+    owner_lastname VARCHAR(60),
+    owner_phone CHAR(11),
+    owner_email VARCHAR(100),
+    image TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT *
+    FROM owners
+    ORDER BY owner_id ASC;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT * FROM list_owners_sorted_by_id();
+
+SELECT * FROM list_clients_sorted_by_id();
+
+CREATE OR REPLACE PROCEDURE add_owner (
+  p_owner_id INT,
+  p_owner_firstname VARCHAR(60),
+  p_owner_lastname VARCHAR(60),
+  p_owner_phone CHAR(11),
+  p_owner_email VARCHAR(100),
+  p_image TEXT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO owners (
+      owner_id,
+      owner_firstname,
+      owner_lastname, 
+      owner_phone,
+      owner_email,
+      image
+    ) VALUES (
+      p_owner_id,
+      p_owner_firstname, 
+      p_owner_lastname, 
+      p_owner_phone, 
+      p_owner_email, 
+      p_image
+    );
+END $$;
+
+CREATE OR REPLACE PROCEDURE update_owner (
+    p_owner_id int,
+    p_firstname text, 
+    p_lastname text, 
+    p_phone text, 
+    p_email text
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE owners
+    SET
+        owner_firstname = COALESCE(p_firstname, owner_firstname),
+        owner_lastname = COALESCE(p_lastname, owner_lastname),
+        owner_phone = COALESCE(p_phone, owner_phone),
+        owner_email = COALESCE(p_email, owner_email)
+    WHERE owner_id = p_owner_id;
+END $$;
+
+
+CREATE OR REPLACE PROCEDURE delete_owner_by_id(owner_id_to_delete INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM owners WHERE owners.owner_id = owner_id_to_delete;
+END $$;
+
+
+CREATE OR REPLACE FUNCTION search_owners_by_last_name(last_name_search VARCHAR)
+RETURNS TABLE (
+    owner_id INT,
+    owner_firstname VARCHAR,
+    owner_lastname VARCHAR,
+    owner_phone CHAR(11),
+    owner_email VARCHAR,
+    image TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+        SELECT *
+        FROM owners
+        WHERE owners.owner_lastname ILIKE '%' || last_name_search || '%'
+		ORDER BY owners.owner_id ASC;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+create table employee
+(
+	employee_id serial primary key,
+	employee_login text not null,
+	employee_password text not null,
+	employee_firstname varchar(60) not null,
+	employee_lastname varchar(60) not null, 
+	employee_phone char(11) not null,
+	employee_experience int not null,
+	employee_email varchar(100) not null,
+	employee_birthday date not null,
+	employee_hire_date date not null,
+	image text
+);
+
+INSERT INTO employee (employee_login,employee_password,employee_firstname, employee_lastname, employee_phone, employee_experience, employee_email, employee_birthday, employee_hire_date, image) VALUES
+('alexgelim','alexgelim12345@','Александр', 'Гелим', '89519713859', 2, 'sweet220778@mail.ru', '2005-06-13', '2023-01-15', 'user.jpg');
+
+CREATE OR REPLACE FUNCTION find_employee_by_password(p_employee_password TEXT, p_employee_login text)
+RETURNS TABLE (
+    employee_id INT,
+    employee_login TEXT,
+	employee_password text,
+    employee_firstname VARCHAR(60),
+    employee_lastname VARCHAR(60),
+    employee_phone CHAR(11),
+    employee_experience INT,
+    employee_email VARCHAR(100),
+    employee_birthday DATE,
+    employee_hire_date DATE,
+    image TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT *
+    FROM employee
+    WHERE employee.employee_password = p_employee_password and employee.employee_login = p_employee_login;
+END;
+$$ LANGUAGE plpgsql;
+
+select * from find_employee_by_password('alexgelim12345@','alexgelim');
+
+
+create table agents
+(
+	agent_id serial primary key,
+	agent_login text,
+	agent_password text,
+	agent_firstname varchar(60) not null,
+	agent_lastname varchar(60) not null, 
+	agent_phone char(11) not null,
+	agent_experience int not null,
+	agent_email varchar(100) not null,
+	agent_birthday date not null,
+	agent_hire_date date not null,
+	agent_percent int not null,
+	agent_amount decimal(10,2),
+	image text
+);
+
+
+INSERT INTO agents (agent_login,agent_password,agent_firstname, agent_lastname, agent_phone, agent_experience, agent_email, agent_birthday, agent_hire_date, agent_percent, agent_amount, image) VALUES
+('anna','anna12345','Анна', 'Смирнова', '89161234567', 3, 'anna.smirnova@example.com', '1990-05-12', '2020-01-15', 3, 124000.00, 'СмирноваАнна.jpg'),
+('igor','igor12345','Игорь', 'Кузнецов', '89272345678', 5, 'igor.kuznetsov@example.com', '1985-03-22', '2018-06-10', 5, 150000.50, 'КузнецовИгорь.jpg'),
+('olga','olga12345','Ольга', 'Васильева', '89383456789', 2, 'olga.vasilyeva@example.com', '1992-08-30', '2021-03-05', 6, 200000.75, 'ВасильеваОльга.jpg'),
+('sergey','sergey12345','Сергей', 'Петинов', '89494567890', 3, 'sergey.petinov@example.com', '1988-11-14', '2019-07-20', 4, 75000.25, 'ПетиновСергей.jpg'),
+('ulia','ulia12345','Юлия', 'Лебедева', '89505678901', 1, 'yulia.lebedeva@example.com', '1995-02-16', '2020-09-11', 4, 120000.00, 'ЛебедеваЮлия.jpg'),
+('kirill','kirill12345','Кирилл', 'Морозов', '89616789012', 5, 'kirill.morozov@example.com', '1983-12-23', '2017-04-30', 6, 35000.00, 'МорозовКирилл.jpg'),
+('natalia','natalia12345','Наталья', 'Федорова', '89727890123', 4, 'natalya.fedorova@example.com', '1991-07-05', '2022-10-16', 6, 60000.10, 'ФедороваНаталья.jpg'),
+('aleksandr','aleksandr12345','Александр', 'Тимофеев', '89838901234', 6, 'alexander.timofeev@example.com', '1987-01-02', '2015-12-25', 4, 140000.50, 'ТимофеевАлександр.jpg'),
+('evgeniya','evgeniya12345','Евгения', 'Коваленко', '89949012345', 3, 'evgeniya.kovalenko@example.com', '1993-04-18', '2021-08-14', 5, 100000.00, 'КоваленкоЕвгения.jpg'),
+('pavel','pavel12345','Павел', 'Григорьев', '89051234567', 2, 'pavel.grigoriev@example.com', '1982-06-29', '2016-11-05', 6, 125000.00, 'ГригорьевПавел.jpg');
+
+
+CREATE OR REPLACE FUNCTION find_agent_by_password(p_agent_password TEXT, p_agent_login text)
+RETURNS TABLE (
+    agent_id INT,
+    agent_login TEXT,
+	agent_password text,
+    agent_firstname VARCHAR(60),
+    agent_lastname VARCHAR(60),
+    agent_phone CHAR(11),
+    agent_experience INT,
+    agent_email VARCHAR(100),
+    agent_birthday DATE,
+    agent_hire_date DATE,
+    agent_percent INT,
+    agent_amount DECIMAL(10,2),
+    image TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT *
+    FROM agents
+    WHERE agents.agent_password = p_agent_password and agents.agent_login = p_agent_login;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT * FROM find_agent_by_password('oleg12345', 'oleg');
+
+CREATE OR REPLACE FUNCTION search_agents_by_last_name(last_name_search VARCHAR)
+RETURNS TABLE (
+    agent_id INT,
+	agent_login text,
+	agent_password text,
+    agent_firstname VARCHAR,
+    agent_lastname VARCHAR,
+    agent_phone CHAR(11),
+    agent_experience INT,
+    agent_email VARCHAR,
+    agent_birthday DATE,
+    agent_hire_date DATE,
+    agent_percent INT,
+    agent_amount DECIMAL(10,2),
+    image TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+        SELECT *
+        FROM agents
+        WHERE agents.agent_lastname ILIKE '%' || last_name_search || '%'
+		ORDER BY agents.agent_id ASC;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT * FROM search_agents_by_last_name('С');
+
+select * from agents;
+
+
+CREATE OR REPLACE PROCEDURE update_agent (
+    p_agent_id int,
+	p_agent_login text,
+	p_agent_password text,
+    p_firstname text, 
+    p_lastname text, 
+    p_phone text, 
+    p_experience INT, 
+    p_email text, 
+    p_birthday timestamp without time zone, 
+    p_hire_date timestamp without time zone, 
+    p_percent int, 
+    p_amount double precision
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE agents
+    SET
+		agent_login = COALESCE(p_agent_login, agent_login),
+		agent_password = COALESCE(p_agent_password, p_agent_password),
+        agent_firstname = COALESCE(p_firstname, agent_firstname),
+        agent_lastname = COALESCE(p_lastname, agent_lastname),
+        agent_phone = COALESCE(p_phone, agent_phone),
+        agent_experience = COALESCE(p_experience, agent_experience),
+        agent_email = COALESCE(p_email, agent_email),
+        agent_birthday = COALESCE(p_birthday, agent_birthday),
+        agent_hire_date = COALESCE(p_hire_date, agent_hire_date),
+        agent_percent = COALESCE(p_percent, agent_percent),
+        agent_amount = COALESCE(p_amount, agent_amount)
+    WHERE agent_id = p_agent_id;
+END $$;
+
+
+CREATE OR REPLACE PROCEDURE add_agent (
+	p_agent_id int,
+	p_agent_login text,
+	p_agent_password text,
+    p_firstname text, 
+    p_lastname text, 
+    p_phone text, 
+    p_experience INT, 
+    p_email text, 
+    p_birthday timestamp without time zone, 
+    p_hire_date timestamp without time zone, 
+    p_percent int, 
+    p_amount double precision, 
+    p_image TEXT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO agents (
+		agent_id,
+		agent_login,
+		agent_password,
+        agent_firstname, 
+        agent_lastname, 
+        agent_phone, 
+        agent_experience, 
+        agent_email, 
+        agent_birthday, 
+        agent_hire_date, 
+        agent_percent, 
+        agent_amount, 
+        image
+    ) VALUES (
+		p_agent_id,
+		p_agent_login,
+		p_agent_password,
+        p_firstname, 
+        p_lastname, 
+        p_phone, 
+        p_experience, 
+        p_email, 
+        p_birthday, 
+        p_hire_date, 
+        p_percent, 
+        p_amount, 
+        p_image
+    );
+END $$;
+
+
+CREATE OR REPLACE PROCEDURE delete_agent_by_id(agent_id_to_delete INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM agents WHERE agent_id = agent_id_to_delete;
+END $$;
+
+CREATE OR REPLACE FUNCTION list_agents_sorted_by_id() 
+RETURNS TABLE (
+    agent_id INT,
+	agent_login text,
+	agent_password text,
+    agent_firstname VARCHAR(60),
+    agent_lastname VARCHAR(60),
+    agent_phone CHAR(11),
+    agent_experience INT,
+    agent_email VARCHAR(100),
+    agent_birthday DATE,
+    agent_hire_date DATE,
+    agent_percent INT,
+    agent_amount DECIMAL(10,2),
+    image TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT *
+    FROM agents
+    ORDER BY agent_id ASC;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT * FROM list_agents_sorted_by_id();
+
+
+
+CREATE OR REPLACE FUNCTION get_avg_agent_percent()
+RETURNS numeric AS $$
+DECLARE
+    avg_percent numeric;
+BEGIN
+    SELECT ROUND(AVG(agent_percent), 1) INTO avg_percent FROM agents;
+
+    RETURN avg_percent;
+END;
+$$ LANGUAGE plpgsql;
+select * from agents;
+select get_avg_agent_percent();
+
+
+
+CREATE OR REPLACE FUNCTION count_agents()
+RETURNS integer AS $$
+DECLARE
+    total_agents integer;
+BEGIN
+    SELECT COUNT(*) INTO total_agents FROM agents;
+    RETURN total_agents;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT count_agents();
+
+
+
+CREATE OR REPLACE FUNCTION avg_agent_amount()
+RETURNS int AS $$
+DECLARE
+    avg_amount int;
+BEGIN
+    SELECT ROUND(avg(agent_amount))::integer INTO avg_amount FROM agents;
+    RETURN avg_amount;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT avg_agent_amount();
+
+SELECT * FROM find_agent_by_password('pavel12345', 'pavel');
+
+create table realty_status
+(
+	realty_status_id serial primary key,
+	realty_status_text varchar(50) default 'Купить'
+);
+insert into realty_status (realty_status_text) values ('Купить'), ('Снять'), ('Продано/сдано');
+create table realty_type
+(
+	realty_type_id serial primary key,
+	realty_type_text varchar(50) not null
+);
+insert into realty_type (realty_type_text) values ('Квартира'), ('Дом');
+
+CREATE TABLE realty (
+    realty_id SERIAL PRIMARY KEY,
+    realty_address text,
+    realty_price DECIMAL(15,2),
+    realty_type_id INT REFERENCES realty_type (realty_type_id),
+    realty_area DECIMAL(10,2),
+    realty_rooms INT,
+    realty_status_id INT REFERENCES realty_status (realty_status_id),
+    owner_id INT REFERENCES owners (owner_id) ON DELETE CASCADE,
+    image TEXT,
+    url TEXT,
+    floor INT,
+    underground VARCHAR(255),
+    residential_complex VARCHAR(255)
+);
+
+INSERT INTO realty (realty_address, realty_price, realty_type_id, realty_area, realty_rooms, realty_status_id, owner_id, image, url, floor, underground, residential_complex) 
+VALUES 
+('Красносельский, ул. Маршала Казакова, 78к1', 6800000, 1, 36.00, 1, 1, 1, 'realty1.jpg', 'https://spb.cian.ru/sale/flat/317347981/', 8, 'Автово', 'Южная акватория'),
+('Приморский, Юнтолово, ул. Плесецкая, 14', 7800000, 1,31.40, 1, 1, 2, 'realty2.jpg', 'https://spb.cian.ru/sale/flat/316514754/', 3, 'Комендантский проспект', 'Полис на комендантском'), 
+('Невский, ул. Крыленко, 1к1с3', 8300000, 1,38.70, 1, 1, 3, 'realty3.jpg', 'https://spb.cian.ru/sale/flat/315865155/', 13, 'Улица Дыбенко', 'О Юность'), 
+('Невский, просп. Александровской фермы, 8', 17350000, 1,63.20, 2, 1, 5, 'realty5.jpg', 'https://spb.cian.ru/sale/flat/316743887/', 20, 'Пролетарная', 'Green City'), 
+('Адмиралтейский, Измайловское, ул. Парфеновская, 7к1', 19500000, 1,59.00, 2, 1, 6, 'realty6.jpg', 'https://spb.cian.ru/sale/flat/314363740/', 10, 'Фрунзенская', 'Квартал Галактика'), 
+('Приморский, № 65, Приморский просп., 52К1', 29000000, 1,81.40, 3, 1, 7, 'realty7.jpg', 'https://spb.cian.ru/sale/flat/312557683/', 6, 'Беговая', 'Life Приморский'), 
+('р-н Пушкинский, мкр. Пушкин, ул. Архитектора Данини, 15к2', 19900000, 1,84.00, 3, 1, 8, 'realty8.jpg', 'https://spb.cian.ru/sale/flat/316058001/', 2, 'Купчино', 'UP-квартал Пушкинский'), 
+('р-н Приморский, Коломяги, Парашютная ул., 56к1', 11900000, 1,85.50, 3, 1, 9, 'realty9.jpg', 'https://spb.cian.ru/sale/flat/303173209/', 5, 'Комендантский проспект', 'Каменка'), 
+('р-н Колпинский, мкр. Металлострой, ул. Богайчука, 12', 6000000, 1,44.00, 2, 1, 4, 'realty4.jpg', 'https://spb.cian.ru/sale/flat/284050147/', 4, 'Рыбацкое', ''), 
+('р-н Красносельский, мкр. Красное Село, Кингисеппское ш., 12к4', 12950000, 1,85.20, 4, 1, 10, 'realty10.jpg', 'https://spb.cian.ru/sale/flat/316135615/', 9, 'Проспект Ветеранов', ''),
+('р-н Выборгский, Шувалово-Озерки, просп. Просвещения, 14к4', 24999999, 1,170.50, 4, 1, 11, 'realty11.jpg', 'https://spb.cian.ru/sale/flat/309811980/', 15, 'Проспект Просвещения', ''),
+('р-н Московский, Новоизмайловское, Краснопутиловская ул., 113К1', 29550000, 1,107.00, 4, 1, 12, 'realty12.jpg', 'https://spb.cian.ru/sale/flat/315104950/', 3, 'Московская', 'Clever');
+
+select * from realty;
+
+CREATE OR REPLACE PROCEDURE add_realty (
+		p_realty_id int,
+    	p_realty_address text, 
+   	 	p_realty_price double precision, 
+   		p_realty_type_id int, 
+   	 	p_realty_area double precision, 
+    	p_realty_rooms int,
+		p_realty_status_id int,
+		p_owner_id int,
+        p_image text,
+		p_url TEXT,
+   		p_floor INT,
+    	p_underground text,
+ 	   p_residential_complex text
+		
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO realty (
+		realty_id,
+    	realty_address, 
+   	 	realty_price, 
+   		realty_type_id, 
+   	 	realty_area, 
+    	realty_rooms,
+		realty_status_id,
+		owner_id,
+        image,
+		url,
+    	floor,
+    underground,
+    residential_complex
+    ) VALUES (
+		p_realty_id,
+        p_realty_address, 
+        p_realty_price, 
+        p_realty_type_id, 
+        p_realty_area, 
+        p_realty_rooms, 
+        p_realty_status_id, 
+		p_owner_id,
+        p_image,
+		p_url,
+   		p_floor,
+    	p_underground,
+ 	   p_residential_complex
+    );
+END $$;
+
+
+CREATE OR REPLACE PROCEDURE update_realty (
+    p_realty_id int,
+    p_realty_address text, 
+    p_realty_price double precision, 
+    p_realty_type_id int, 
+    p_realty_area double precision, 
+    p_realty_rooms int,
+	p_realty_status_id int,
+	p_owner_id int,
+			p_url TEXT,
+   		p_floor INT,
+    	p_underground text,
+ 	   p_residential_complex text
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE realty
+    SET
+        realty_address = COALESCE(p_realty_address, realty_address),
+        realty_price = COALESCE(p_realty_price, realty_price),
+        realty_type_id = COALESCE(p_realty_type_id, realty_type_id),
+        realty_area = COALESCE(p_realty_area, realty_area),
+        realty_rooms = COALESCE(p_realty_rooms, realty_rooms),
+        realty_status_id = COALESCE(p_realty_status_id, realty_status_id),
+		owner_id = COALESCE(p_owner_id, owner_id),
+		url = COALESCE(p_url, url),
+		floor = COALESCE(p_floor, floor),
+		underground = COALESCE(p_underground, underground),
+		residential_complex = COALESCE(p_residential_complex, residential_complex)
+    WHERE realty_id = p_realty_id;
+END $$;
+
+
+CREATE OR REPLACE PROCEDURE delete_realty_by_id(realty_id_to_delete INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM realty WHERE realty_id = realty_id_to_delete;
+END $$;
+
+-- Функция для подсчёта общего количества объектов недвижимости
+CREATE OR REPLACE FUNCTION get_total_realties_count(
+    p_type_id INT DEFAULT NULL,
+    p_status_id INT DEFAULT NULL
+)
+RETURNS INT AS $$
+BEGIN
+    RETURN (
+        SELECT COUNT(*)
+        FROM realty
+        WHERE (p_type_id IS NULL OR realty_type_id = p_type_id)
+          AND (p_status_id IS NULL OR realty_status_id = p_status_id)
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+-- Функция для загрузки объектов недвижимости с пагинацией и фильтрацией
+CREATE OR REPLACE FUNCTION get_realty_info_filtered_paged(
+    p_page INT,
+    p_page_size INT,
+    p_type_id INT DEFAULT NULL,
+    p_status_id INT DEFAULT NULL
+)
+RETURNS TABLE (
+ realty_id INT,
+    realty_address text,
+    realty_price DECIMAL(15,2),
+	realty_type varchar(50),
+    realty_status_text VARCHAR(50),
+    realty_area DECIMAL(10,2),
+    realty_rooms INT,
+    owner_phone CHAR(11),
+	image text,
+	url TEXT,
+    floor INT,
+    underground VARCHAR(255),
+    residential_complex VARCHAR(255)
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT          r.realty_id,
+        r.realty_address,
+        r.realty_price,
+		rt.realty_type_text,
+        rs.realty_status_text,
+        r.realty_area,
+        r.realty_rooms,
+        o.owner_phone,
+		r.image,
+		r.url,
+	    r.floor,
+	    r.underground,
+	    r.residential_complex
+    FROM realty r
+	    INNER JOIN
+        realty_status rs ON r.realty_status_id = rs.realty_status_id
+    INNER JOIN
+        owners o ON r.owner_id = o.owner_id
+	INNER JOIN
+        realty_type rt ON r.realty_type_id = rt.realty_type_id
+    WHERE (p_type_id IS NULL OR r.realty_type_id = p_type_id)
+      AND (p_status_id IS NULL OR r.realty_status_id = p_status_id)
+    ORDER BY r.realty_id
+    LIMIT p_page_size OFFSET (p_page - 1) * p_page_size;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Функция для загрузки всех отфильтрованных объектов недвижимости
+CREATE OR REPLACE FUNCTION get_all_realty_info_filtered(
+    p_type_id INT DEFAULT NULL,
+    p_status_id INT DEFAULT NULL,
+    p_min_price DECIMAL DEFAULT NULL,
+    p_max_price DECIMAL DEFAULT NULL,
+    p_min_area DECIMAL DEFAULT NULL,
+    p_max_area DECIMAL DEFAULT NULL,
+    p_rooms INT DEFAULT NULL
+)
+RETURNS TABLE (
+    realty_id INT,
+    realty_address TEXT,
+    realty_price DECIMAL(15,2),
+    realty_type VARCHAR(50),
+    realty_status_text VARCHAR(50),
+    realty_area DECIMAL(10,2),
+    realty_rooms INT,
+    owner_phone CHAR(11),
+    image TEXT,
+    url TEXT,
+    floor INT,
+    underground VARCHAR(255),
+    residential_complex VARCHAR(255)
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        r.realty_id,
+        r.realty_address,
+        r.realty_price,
+        rt.realty_type_text,
+        rs.realty_status_text,
+        r.realty_area,
+        r.realty_rooms,
+        o.owner_phone,
+        COALESCE(r.image, '') AS image,
+        COALESCE(r.url, '') AS url,
+        COALESCE(r.floor, 0) AS floor,
+        COALESCE(r.underground, '') AS underground,
+        COALESCE(r.residential_complex, '') AS residential_complex
+    FROM realty r
+    INNER JOIN realty_type rt ON r.realty_type_id = rt.realty_type_id
+    INNER JOIN realty_status rs ON r.realty_status_id = rs.realty_status_id
+    INNER JOIN owners o ON r.owner_id = o.owner_id
+    WHERE (p_type_id IS NULL OR r.realty_type_id = p_type_id)
+      AND (p_status_id IS NULL OR r.realty_status_id = p_status_id)
+      AND (p_min_price IS NULL OR r.realty_price >= p_min_price)
+      AND (p_max_price IS NULL OR r.realty_price <= p_max_price)
+      AND (p_min_area IS NULL OR r.realty_area >= p_min_area)
+      AND (p_max_area IS NULL OR r.realty_area <= p_max_area)
+      AND (p_rooms IS NULL OR (p_rooms < 4 AND r.realty_rooms = p_rooms) OR (p_rooms = 4 AND r.realty_rooms >= 4));
+END;
+$$ LANGUAGE plpgsql;
+
+-- Функция для подсчёта общего количества отфильтрованных объектов
+CREATE OR REPLACE FUNCTION get_total_realties_count_filtered(
+    p_type_id INT DEFAULT NULL,
+    p_status_id INT DEFAULT NULL,
+    p_min_price DECIMAL DEFAULT NULL,
+    p_max_price DECIMAL DEFAULT NULL,
+    p_min_area DECIMAL DEFAULT NULL,
+    p_max_area DECIMAL DEFAULT NULL,
+    p_rooms INT DEFAULT NULL
+)
+RETURNS INT AS $$
+BEGIN
+    RETURN (
+        SELECT COUNT(*)
+        FROM realty r
+        INNER JOIN realty_type rt ON r.realty_type_id = rt.realty_type_id
+        INNER JOIN realty_status rs ON r.realty_status_id = rs.realty_status_id
+        INNER JOIN owners o ON r.owner_id = o.owner_id
+        WHERE (p_type_id IS NULL OR r.realty_type_id = p_type_id)
+          AND (p_status_id IS NULL OR r.realty_status_id = p_status_id)
+          AND (p_min_price IS NULL OR r.realty_price >= p_min_price)
+          AND (p_max_price IS NULL OR r.realty_price <= p_max_price)
+          AND (p_min_area IS NULL OR r.realty_area >= p_min_area)
+          AND (p_max_area IS NULL OR r.realty_area <= p_max_area)
+          AND (p_rooms IS NULL OR (p_rooms < 4 AND r.realty_rooms = p_rooms) OR (p_rooms = 4 AND r.realty_rooms >= 4))
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+-- Функция для загрузки отфильтрованных объектов с пагинацией
+CREATE OR REPLACE FUNCTION get_realty_info_filtered_paged(
+    p_page INT,
+    p_page_size INT,
+    p_type_id INT DEFAULT NULL,
+    p_status_id INT DEFAULT NULL,
+    p_min_price DECIMAL DEFAULT NULL,
+    p_max_price DECIMAL DEFAULT NULL,
+    p_min_area DECIMAL DEFAULT NULL,
+    p_max_area DECIMAL DEFAULT NULL,
+    p_rooms INT DEFAULT NULL
+)
+RETURNS TABLE (
+    realty_id INT,
+    realty_address TEXT,
+    realty_price DECIMAL(15,2),
+    realty_type VARCHAR(50),
+    realty_status_text VARCHAR(50),
+    realty_area DECIMAL(10,2),
+    realty_rooms INT,
+    owner_phone CHAR(11),
+    image TEXT,
+    url TEXT,
+    floor INT,
+    underground VARCHAR(255),
+    residential_complex VARCHAR(255)
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        r.realty_id,
+        r.realty_address,
+        r.realty_price,
+        rt.realty_type_text,
+        rs.realty_status_text,
+        r.realty_area,
+        r.realty_rooms,
+        o.owner_phone,
+        COALESCE(r.image, '') AS image,
+        COALESCE(r.url, '') AS url,
+        COALESCE(r.floor, 0) AS floor,
+        COALESCE(r.underground, '') AS underground,
+        COALESCE(r.residential_complex, '') AS residential_complex
+    FROM realty r
+    INNER JOIN realty_type rt ON r.realty_type_id = rt.realty_type_id
+    INNER JOIN realty_status rs ON r.realty_status_id = rs.realty_status_id
+    INNER JOIN owners o ON r.owner_id = o.owner_id
+    WHERE (p_type_id IS NULL OR r.realty_type_id = p_type_id)
+      AND (p_status_id IS NULL OR r.realty_status_id = p_status_id)
+      AND (p_min_price IS NULL OR r.realty_price >= p_min_price)
+      AND (p_max_price IS NULL OR r.realty_price <= p_max_price)
+      AND (p_min_area IS NULL OR r.realty_area >= p_min_area)
+      AND (p_max_area IS NULL OR r.realty_area <= p_max_area)
+      AND (p_rooms IS NULL OR (p_rooms < 4 AND r.realty_rooms = p_rooms) OR (p_rooms = 4 AND r.realty_rooms >= 4))
+    ORDER BY r.realty_id
+    LIMIT p_page_size OFFSET (p_page - 1) * p_page_size;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+
+CREATE OR REPLACE FUNCTION get_realty_info()
+RETURNS TABLE (
+    realty_id INT,
+    realty_address text,
+    realty_price DECIMAL(15,2),
+	realty_type varchar(50),
+    realty_status_text VARCHAR(50),
+    realty_area DECIMAL(10,2),
+    realty_rooms INT,
+    owner_phone CHAR(11),
+	image text,
+	url TEXT,
+    floor INT,
+    underground VARCHAR(255),
+    residential_complex VARCHAR(255)
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+         r.realty_id,
+        r.realty_address,
+        r.realty_price,
+		rt.realty_type_text,
+        rs.realty_status_text,
+        r.realty_area,
+        r.realty_rooms,
+        o.owner_phone,
+		r.image,
+		r.url,
+	    r.floor,
+	    r.underground,
+	    r.residential_complex
+    FROM
+        realty r
+    INNER JOIN
+        realty_status rs ON r.realty_status_id = rs.realty_status_id
+    INNER JOIN
+        owners o ON r.owner_id = o.owner_id
+	INNER JOIN
+        realty_type rt ON r.realty_type_id = rt.realty_type_id
+		ORDER BY r.realty_id ASC;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT * FROM get_realty_info();
+
+
+CREATE OR REPLACE FUNCTION get_realty_info_by_type(p_realty_type int)
+RETURNS TABLE (
+    realty_id INT,
+    realty_address text,
+    realty_price DECIMAL(15,2),
+	realty_type varchar(50),
+    realty_status_text VARCHAR(50),
+    realty_area DECIMAL(10,2),
+    realty_rooms INT,
+    owner_phone CHAR(11),
+	image text,
+	url TEXT,
+    floor INT,
+    underground VARCHAR(255),
+    residential_complex VARCHAR(255)
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        r.realty_id,
+        r.realty_address,
+        r.realty_price,
+		rt.realty_type_text,
+        rs.realty_status_text,
+        r.realty_area,
+        r.realty_rooms,
+        o.owner_phone,
+		r.image,
+		r.url,
+	    r.floor,
+	    r.underground,
+	    r.residential_complex
+    FROM
+        realty r
+    INNER JOIN
+        realty_status rs ON r.realty_status_id = rs.realty_status_id
+    INNER JOIN
+        owners o ON r.owner_id = o.owner_id
+	INNER JOIN
+        realty_type rt ON r.realty_type_id = rt.realty_type_id
+		where r.realty_type_id = p_realty_type
+		ORDER BY r.realty_id ASC;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT * FROM get_realty_info_by_type(1);
+
+
+CREATE OR REPLACE FUNCTION get_realty_info_by_status(p_realty_type int)
+RETURNS TABLE (
+    realty_id INT,
+    realty_address text,
+    realty_price DECIMAL(15,2),
+	realty_type varchar(50),
+    realty_status_text VARCHAR(50),
+    realty_area DECIMAL(10,2),
+    realty_rooms INT,
+    owner_phone CHAR(11),
+	image text,
+	url TEXT,
+    floor INT,
+    underground VARCHAR(255),
+    residential_complex VARCHAR(255)
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        r.realty_id,
+        r.realty_address,
+        r.realty_price,
+		rt.realty_type_text,
+        rs.realty_status_text,
+        r.realty_area,
+        r.realty_rooms,
+        o.owner_phone,
+		r.image,
+		r.url,
+	    r.floor,
+	    r.underground,
+	    r.residential_complex
+    FROM
+        realty r
+    INNER JOIN
+        realty_status rs ON r.realty_status_id = rs.realty_status_id
+    INNER JOIN
+        owners o ON r.owner_id = o.owner_id
+	INNER JOIN
+        realty_type rt ON r.realty_type_id = rt.realty_type_id
+		where r.realty_status_id = p_realty_type
+		ORDER BY r.realty_id ASC;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT * FROM get_realty_info_by_status(3);
+
+
+CREATE OR REPLACE FUNCTION get_realty_info_by_both(p_realty_type int, p_realty_status int)
+RETURNS TABLE (
+    realty_id INT,
+    realty_address text,
+    realty_price DECIMAL(15,2),
+	realty_type varchar(50),
+    realty_status_text VARCHAR(50),
+    realty_area DECIMAL(10,2),
+    realty_rooms INT,
+    owner_phone CHAR(11),
+	image text,
+	url TEXT,
+    floor INT,
+    underground VARCHAR(255),
+    residential_complex VARCHAR(255)
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        r.realty_id,
+        r.realty_address,
+        r.realty_price,
+		rt.realty_type_text,
+        rs.realty_status_text,
+        r.realty_area,
+        r.realty_rooms,
+        o.owner_phone,
+		r.image,
+		r.url,
+	    r.floor,
+	    r.underground,
+	    r.residential_complex
+    FROM
+        realty r
+    INNER JOIN
+        realty_status rs ON r.realty_status_id = rs.realty_status_id
+    INNER JOIN
+        owners o ON r.owner_id = o.owner_id
+	INNER JOIN
+        realty_type rt ON r.realty_type_id = rt.realty_type_id
+		where r.realty_status_id = p_realty_status and r.realty_type_id = p_realty_type
+		ORDER BY r.realty_id ASC;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT * FROM get_realty_info_by_both(1,2);
+
+
+
+CREATE OR REPLACE FUNCTION count_realty_by_flat_and_status1()
+RETURNS integer AS $$
+DECLARE
+    property_count integer;
+BEGIN
+    SELECT COUNT(*) INTO property_count
+    FROM realty
+    WHERE realty_type_id = 1 AND realty_status_id = 1;
+
+    RETURN property_count;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT count_realty_by_flat_and_status1();
+
+
+CREATE OR REPLACE FUNCTION count_realty_by_flat_and_status2()
+RETURNS integer AS $$
+DECLARE
+    property_count integer;
+BEGIN
+    SELECT COUNT(*) INTO property_count
+    FROM realty
+    WHERE realty_type_id = 1 AND realty_status_id = 2;
+
+    RETURN property_count;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT count_realty_by_flat_and_status2();
+
+
+CREATE OR REPLACE FUNCTION count_realty_by_flat_and_status3()
+RETURNS integer AS $$
+DECLARE
+    property_count integer;
+BEGIN
+    SELECT COUNT(*) INTO property_count
+    FROM realty
+    WHERE realty_type_id = 1 AND realty_status_id = 3;
+
+    RETURN property_count;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT count_realty_by_flat_and_status3();
+
+
+
+
+
+
+
+
+
+CREATE OR REPLACE FUNCTION count_realty_by_house_and_status1()
+RETURNS integer AS $$
+DECLARE
+    property_count integer;
+BEGIN
+    SELECT COUNT(*) INTO property_count
+    FROM realty
+    WHERE realty_type_id = 2 AND realty_status_id = 1;
+
+    RETURN property_count;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT count_realty_by_flat_and_status1();
+
+
+
+CREATE OR REPLACE FUNCTION count_realty_by_house_and_status2()
+RETURNS integer AS $$
+DECLARE
+    property_count integer;
+BEGIN
+    SELECT COUNT(*) INTO property_count
+    FROM realty
+    WHERE realty_type_id = 2 AND realty_status_id = 2;
+
+    RETURN property_count;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT count_realty_by_flat_and_status2();
+
+
+CREATE OR REPLACE FUNCTION count_realty_by_house_and_status3()
+RETURNS integer AS $$
+DECLARE
+    property_count integer;
+BEGIN
+    SELECT COUNT(*) INTO property_count
+    FROM realty
+    WHERE realty_type_id = 2 AND realty_status_id = 3;
+
+    RETURN property_count;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT count_realty_by_flat_and_status3();
+
+
+
+
+CREATE OR REPLACE FUNCTION avg_realty_1room_type_flat()
+RETURNS integer AS $$
+DECLARE
+    room_count integer;
+BEGIN
+    SELECT ROUND(avg(realty_price))::integer INTO room_count
+    FROM realty
+    WHERE realty_rooms = 1 AND realty_type_id = 1;
+
+    RETURN room_count;
+END;
+$$ LANGUAGE plpgsql;
+
+select avg_realty_1room_type_flat();
+
+
+
+CREATE OR REPLACE FUNCTION avg_realty_2room_type_flat()
+RETURNS integer AS $$
+DECLARE
+    room_count integer;
+BEGIN
+    SELECT ROUND(avg(realty_price))::integer INTO room_count
+    FROM realty
+    WHERE realty_rooms = 2 AND realty_type_id = 1;
+
+    RETURN room_count;
+END;
+$$ LANGUAGE plpgsql;
+
+select avg_realty_2room_type_flat();
+
+
+CREATE OR REPLACE FUNCTION avg_realty_3room_type_flat()
+RETURNS integer AS $$
+DECLARE
+    room_count integer;
+BEGIN
+    SELECT ROUND(avg(realty_price))::integer INTO room_count
+    FROM realty
+    WHERE realty_rooms = 3 AND realty_type_id = 1;
+
+    RETURN room_count;
+END;
+$$ LANGUAGE plpgsql;
+
+select avg_realty_3room_type_flat();
+
+
+CREATE OR REPLACE FUNCTION avg_realty_4room_type_flat()
+RETURNS integer AS $$
+DECLARE
+    room_count integer;
+BEGIN
+    SELECT ROUND(avg(realty_price))::integer INTO room_count
+    FROM realty
+    WHERE realty_rooms = 4 AND realty_type_id = 1;
+
+    RETURN room_count;
+END;
+$$ LANGUAGE plpgsql;
+
+select avg_realty_4room_type_flat();
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE OR REPLACE FUNCTION avg_realty_5room_type_house()
+RETURNS decimal(10,2) AS $$
+DECLARE
+    room_count decimal(10,2);
+BEGIN
+    SELECT avg(realty_price) INTO room_count
+    FROM realty
+    WHERE realty_rooms = 5 AND realty_type_id = 2;
+
+    RETURN room_count;
+END;
+$$ LANGUAGE plpgsql;
+
+select avg_realty_5room_type_house();
+
+
+CREATE OR REPLACE FUNCTION avg_realty_6room_type_house()
+RETURNS decimal(10,2) AS $$
+DECLARE
+    room_count decimal(10,2);
+BEGIN
+    SELECT avg(realty_price) INTO room_count
+    FROM realty
+    WHERE realty_rooms = 6 AND realty_type_id = 2;
+
+    RETURN room_count;
+END;
+$$ LANGUAGE plpgsql;
+
+select avg_realty_6room_type_house();
+
+
+CREATE OR REPLACE FUNCTION avg_realty_7room_type_house()
+RETURNS decimal(10,2) AS $$
+DECLARE
+    room_count decimal(10,2);
+BEGIN
+    SELECT avg(realty_price) INTO room_count
+    FROM realty
+    WHERE realty_rooms = 7 AND realty_type_id = 2;
+
+    RETURN room_count;
+END;
+$$ LANGUAGE plpgsql;
+
+select avg_realty_7room_type_house();
+
+
+CREATE OR REPLACE FUNCTION avg_realty_8room_type_house()
+RETURNS decimal(10,2) AS $$
+DECLARE
+    room_count decimal(10,2);
+BEGIN
+    SELECT avg(realty_price) INTO room_count
+    FROM realty
+    WHERE realty_rooms = 8 AND realty_type_id = 2;
+
+    RETURN room_count;
+END;
+$$ LANGUAGE plpgsql;
+
+select avg_realty_8room_type_house();
+
+
+
+create table deals
+(
+	deal_id serial primary key,
+	realty_id int references realty (realty_id),
+	client_id int references clients (client_id),
+	agent_id int references agents (agent_id),
+	deal_date date default current_date,
+	realty_status_id int references realty_status (realty_status_id),
+	deal_cost decimal(10,2) not null
+);
+
+select * from deals;
+
+
+
+INSERT INTO deals (realty_id, client_id, agent_id, deal_date, deal_cost)
+VALUES
+(2, 2, 2, '2023-02-15',6500000),
+(3, 3, 3, '2023-03-20',110000),
+(5, 5, 5, '2023-05-12',140000),
+(8, 8, 8, '2023-08-22',12000000),
+(9, 9, 9, '2023-09-30',200000);
+
+
+CREATE OR REPLACE PROCEDURE add_deal (
+	p_deal_id int,
+    p_realty_id INT,
+    p_client_id INT,
+    p_agent_id INT,
+    p_deal_date timestamp without time zone,
+    p_deal_cost double precision
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO deals (deal_id, realty_id, client_id, agent_id, deal_date, deal_cost)
+    VALUES (p_deal_id,p_realty_id, p_client_id, p_agent_id, p_deal_date, p_deal_cost);
+END $$;
+
+CREATE OR REPLACE FUNCTION get_deal_info()
+RETURNS TABLE (
+    deal_id INT,
+    realty_image TEXT,
+    owner_firstname VARCHAR(60),
+    owner_lastname VARCHAR(60),
+    owner_phone CHAR(11),
+    owner_image TEXT,
+    client_firstname VARCHAR(60),
+    client_lastname VARCHAR(60),
+    client_phone CHAR(11),
+    client_image TEXT,
+    agent_firstname VARCHAR(60),
+    agent_lastname VARCHAR(60),
+    agent_phone CHAR(11),
+    agent_image TEXT,
+    deal_date DATE,
+    deal_cost DECIMAL(10,2)
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        d.deal_id,
+        r.image AS realty_image,
+        o.owner_firstname,
+        o.owner_lastname,
+        o.owner_phone,
+        o.image AS owner_image,
+        c.client_firstname,
+        c.client_lastname,
+        c.client_phone,
+        c.image AS client_image,
+        a.agent_firstname,
+        a.agent_lastname,
+        a.agent_phone,
+        a.image AS agent_image,
+        d.deal_date,
+        d.deal_cost
+    FROM
+        deals d
+    JOIN realty r ON d.realty_id = r.realty_id
+    JOIN clients c ON d.client_id = c.client_id
+    JOIN agents a ON d.agent_id = a.agent_id
+    JOIN owners o ON r.owner_id = o.owner_id;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT * FROM get_deal_info();
+
+CREATE OR REPLACE FUNCTION search_deal_by_client_lastname(last_name_search text)
+RETURNS TABLE (
+    deal_id INT,
+    realty_image TEXT,
+    owner_firstname VARCHAR(60),
+    owner_lastname VARCHAR(60),
+    owner_phone CHAR(11),
+    owner_image TEXT,
+    client_firstname VARCHAR(60),
+    client_lastname VARCHAR(60),
+    client_phone CHAR(11),
+    client_image TEXT,
+    agent_firstname VARCHAR(60),
+    agent_lastname VARCHAR(60),
+    agent_phone CHAR(11),
+    agent_image TEXT,
+    deal_date DATE,
+    deal_cost DECIMAL(10,2)
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        d.deal_id,
+        r.image AS realty_image,
+        o.owner_firstname,
+        o.owner_lastname,
+        o.owner_phone,
+        o.image AS owner_image,
+        c.client_firstname,
+        c.client_lastname,
+        c.client_phone,
+        c.image AS client_image,
+        a.agent_firstname,
+        a.agent_lastname,
+        a.agent_phone,
+        a.image AS agent_image,
+        d.deal_date,
+        d.deal_cost
+    FROM
+        deals d
+    JOIN realty r ON d.realty_id = r.realty_id
+    JOIN clients c ON d.client_id = c.client_id
+    JOIN agents a ON d.agent_id = a.agent_id
+    JOIN owners o ON r.owner_id = o.owner_id
+	WHERE c.client_lastname ILIKE '%' || last_name_search || '%'
+		ORDER BY d.deal_id ASC;
+END;
+$$ LANGUAGE plpgsql;
+
+select * from search_deal_by_client_lastname('пет');
+
+
+CREATE OR REPLACE PROCEDURE delete_deal_by_id(deal_id_to_delete INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM deals WHERE deal_id = deal_id_to_delete;
+END $$;
+
+CREATE OR REPLACE FUNCTION update_realty_status()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Обновление статуса недвижимости
+    UPDATE realty
+    SET realty.realty_status_id = 3
+    WHERE realty_id = NEW.realty_id;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER after_deal_insert
+AFTER INSERT ON deals
+FOR EACH ROW
+EXECUTE FUNCTION update_realty_status();
+
+
+
+CREATE OR REPLACE FUNCTION update_agent_amount()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Проверяем, если статус недвижимости равен 2
+    IF NEW.realty_status_id = 2 THEN
+        UPDATE agents
+        SET agent_amount = COALESCE(agent_amount, 0) + (NEW.deal_cost * 0.5)
+        WHERE agent_id = NEW.agent_id;
+
+    -- Проверяем, если статус недвижимости равен 1
+    ELSIF NEW.realty_status_id = 1 THEN
+        UPDATE agents
+        SET agent_amount = COALESCE(agent_amount, 0) + (NEW.deal_cost * agent_percent/100)
+        WHERE agent_id = NEW.agent_id;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER after_deal_insert_update_agent
+AFTER INSERT ON deals
+FOR EACH ROW
+EXECUTE FUNCTION update_agent_amount();
+
+create table demands
+(
+	demand_id serial primary key,
+	client_id int references clients (client_id),
+	realty_type_id int references realty_type (realty_type_id),
+	demand_cost bigint not null,
+	demand_square int not null,
+	demand_rooms int not null
+);
+
+INSERT INTO demands (client_id, realty_type_id, demand_cost, demand_square, demand_rooms)
+VALUES
+(1, 1, 3000000.00, 50.00, 1),  
+(2, 1, 4000000.00, 70.00, 1),  
+(3, 1, 4500000.00, 90.00, 2),  
+(4, 1, 4750000.00, 100.00, 3), 
+(5, 1, 5000000.00, 130.00, 4), 
+(6, 2, 8000000.00, 150.00, 5),  
+(7, 2, 9000000.00, 170.00, 5),  
+(8, 2, 10000000.00, 190.00, 6),  
+(9, 2, 12000000.00, 250.00, 7),
+(10, 2, 140000000.00, 330.00, 8);
+
+CREATE OR REPLACE FUNCTION get_demands_info()
+RETURNS TABLE (
+    demand_id INT,
+	client_id int,
+    client_firstname VARCHAR(60),
+    client_lastname VARCHAR(60),
+	client_phone char(11),
+    image TEXT,
+    realty_type_text VARCHAR(50),
+    demand_cost BIGINT,
+    demand_square INT,
+    demand_rooms INT
+)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT d.demand_id,
+			c.client_id,
+           c.client_firstname,
+           c.client_lastname,
+		   c.client_phone,
+           c.image,
+           rt.realty_type_text,
+           d.demand_cost,
+           d.demand_square,
+           d.demand_rooms
+    FROM demands d
+    INNER JOIN clients c ON d.client_id = c.client_id
+    INNER JOIN realty_type rt ON d.realty_type_id = rt.realty_type_id
+	order by demand_id asc;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT * FROM get_demands_info();
+
+CREATE OR REPLACE PROCEDURE delete_demand_by_id(demand_id_to_delete INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM demands WHERE demand_id = demand_id_to_delete;
+END $$;
+
+
+CREATE OR REPLACE FUNCTION search_demand_by_client(p_client_lastname text)
+RETURNS TABLE (
+    demand_id INT,
+	client_id int,
+    client_firstname VARCHAR(60),
+    client_lastname VARCHAR(60),
+	client_phone char(11),
+    image TEXT,
+    realty_type_text VARCHAR(50),
+    demand_cost BIGINT,
+    demand_square INT,
+    demand_rooms INT
+)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT d.demand_id,
+			c.client_id,
+           c.client_firstname,
+           c.client_lastname,
+		   c.client_phone,
+           c.image,
+           rt.realty_type_text,
+           d.demand_cost,
+           d.demand_square,
+           d.demand_rooms
+    FROM demands d
+    INNER JOIN clients c ON d.client_id = c.client_id
+    INNER JOIN realty_type rt ON d.realty_type_id = rt.realty_type_id
+	WHERE c.client_lastname ILIKE '%' || p_client_lastname || '%'
+	order by demand_id asc;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION search_demand_by_realty_type(p_realty_type int)
+RETURNS TABLE (
+    demand_id INT,
+	client_id int,
+    client_firstname VARCHAR(60),
+    client_lastname VARCHAR(60),
+	client_phone char(11),
+    image TEXT,
+    realty_type_text VARCHAR(50),
+    demand_cost BIGINT,
+    demand_square INT,
+    demand_rooms INT
+)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT d.demand_id,
+			c.client_id,
+           c.client_firstname,
+           c.client_lastname,
+		   c.client_phone,
+           c.image,
+           rt.realty_type_text,
+           d.demand_cost,
+           d.demand_square,
+           d.demand_rooms
+    FROM demands d
+    INNER JOIN clients c ON d.client_id = c.client_id
+    INNER JOIN realty_type rt ON d.realty_type_id = rt.realty_type_id
+	WHERE rt.realty_type_id = p_realty_type
+	order by demand_id asc;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION search_demand_by_both(p_client_lastname text, p_realty_type int)
+RETURNS TABLE (
+    demand_id INT,
+	client_id int,
+    client_firstname VARCHAR(60),
+    client_lastname VARCHAR(60),
+	client_phone char(11),
+    image TEXT,
+    realty_type_text VARCHAR(50),
+    demand_cost BIGINT,
+    demand_square INT,
+    demand_rooms INT
+)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT d.demand_id,
+			c.client_id,
+           c.client_firstname,
+           c.client_lastname,
+		   c.client_phone,
+           c.image,
+           rt.realty_type_text,
+           d.demand_cost,
+           d.demand_square,
+           d.demand_rooms
+    FROM demands d
+    INNER JOIN clients c ON d.client_id = c.client_id
+    INNER JOIN realty_type rt ON d.realty_type_id = rt.realty_type_id
+	WHERE c.client_lastname ILIKE '%' || p_client_lastname || '%' and rt.realty_type_id = p_realty_type
+	order by demand_id asc;
+END;
+$$ LANGUAGE plpgsql;
+
+select * from search_demand_by_both('ива',1);
+
+select * from search_demand_by_realty_type(1);
+
+select * from search_demand_by_client('ива');
+
+select * from realty;
+
+
+
+CREATE OR REPLACE FUNCTION update_agent_amount()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_realty_status_id integer;
+BEGIN
+    -- Получаем текущий realty_status_id из таблицы realty
+    SELECT realty_status_id INTO v_realty_status_id
+    FROM realty
+    WHERE realty_id = NEW.realty_id;
+
+    -- Обновляем agent_amount в зависимости от realty_status_id
+    IF v_realty_status_id = 2 THEN
+        UPDATE agents
+        SET agent_amount = COALESCE(agent_amount, 0) + (NEW.deal_cost * 0.5)
+        WHERE agent_id = NEW.agent_id;
+    ELSIF v_realty_status_id = 1 THEN
+        UPDATE agents
+        SET agent_amount = COALESCE(agent_amount, 0) + (NEW.deal_cost * agent_percent / 100)
+        WHERE agent_id = NEW.agent_id;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Удаляем существующий триггер
+DROP TRIGGER IF EXISTS after_deal_insert_update_agent ON public.deals;
+
+-- Создаем новый триггер BEFORE INSERT
+CREATE OR REPLACE TRIGGER before_deal_insert_update_agent
+    BEFORE INSERT
+    ON public.deals
+    FOR EACH ROW
+    EXECUTE FUNCTION public.update_agent_amount();
+
+create table client_requests
+(
+	client_request_id serial primary key,
+	client_id int references clients (client_id),
+	realty_id int references realty (realty_id),
+	request_date date default current_date
+);
+
+CREATE OR REPLACE FUNCTION get_client_requests()
+RETURNS TABLE (
+    client_request_id INT,
+	client_id int,
+	realty_id int,
+	client_firstname varchar(60),
+	client_lastname varchar(60),
+	realty_address text,
+	request_date date
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+	client_requests.client_request_id,
+		clients.client_id,
+		realty.realty_id,
+	clients.client_firstname,
+	clients.client_lastname,
+	realty.realty_address,
+	client_requests.request_date
+    FROM
+        client_requests 
+    INNER JOIN
+        clients on client_requests.client_id = clients.client_id
+    INNER JOIN
+        realty ON client_requests.realty_id = realty.realty_id
+		ORDER BY request_date ASC;
+END;
+$$ LANGUAGE plpgsql;
+
+select * from get_client_requests();
+
+
+create table client_requests
+(
+	client_request_id serial primary key,
+	client_id int references clients (client_id),
+	realty_id int references realty (realty_id),
+	request_date date default current_date
+);
+
+
+CREATE OR REPLACE PROCEDURE add_client_request(
+    p_client_request_id INT,
+	p_client_id INT,
+    p_realty_id INT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO client_requests (client_request_id,client_id, realty_id)
+    VALUES (p_client_request_id,p_client_id, p_realty_id);
+END;
+$$;
+
+
+CREATE OR REPLACE PROCEDURE update_client_request(
+    p_client_request_id INT,
+    p_client_id INT,
+    p_realty_id INT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE client_requests
+    SET
+        client_id = p_client_id,
+        realty_id = p_realty_id
+    WHERE client_request_id = p_client_request_id;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE delete_client_request(
+    p_client_request_id INT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM client_requests
+    WHERE client_request_id = p_client_request_id;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.get_realty_by_id(p_realty_id integer)
+RETURNS TABLE (
+    realty_id INT,
+    realty_address text,
+    realty_price DECIMAL(15,2),
+	realty_type varchar(50),
+    realty_status_text VARCHAR(50),
+    realty_area DECIMAL(10,2),
+    realty_rooms INT,
+    owner_phone CHAR(11),
+	image text,
+	url TEXT,
+    floor INT,
+    underground VARCHAR(255),
+    residential_complex VARCHAR(255)
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+         r.realty_id,
+        r.realty_address,
+        r.realty_price,
+		rt.realty_type_text,
+        rs.realty_status_text,
+        r.realty_area,
+        r.realty_rooms,
+        o.owner_phone,
+		r.image,
+		r.url,
+	    r.floor,
+	    r.underground,
+	    r.residential_complex
+    FROM
+        realty r
+    INNER JOIN
+        realty_status rs ON r.realty_status_id = rs.realty_status_id
+    INNER JOIN
+        owners o ON r.owner_id = o.owner_id
+	INNER JOIN
+        realty_type rt ON r.realty_type_id = rt.realty_type_id
+    WHERE r.realty_id = p_realty_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION public.get_owner_by_phone(p_owner_phone character(11))
+RETURNS TABLE (
+    owner_id integer,
+    owner_firstname character varying(60),
+    owner_lastname character varying(60),
+    owner_phone character(11),
+    owner_email character varying(100),
+    image text
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        o.owner_id,
+        o.owner_firstname,
+        o.owner_lastname,
+        o.owner_phone,
+        o.owner_email,
+        o.image
+    FROM public.owners o
+    WHERE o.owner_phone = p_owner_phone;
+END;
+$$ LANGUAGE plpgsql;
+
+select * from get_owner_by_phone('89272345678');
+
+CREATE OR REPLACE FUNCTION public.get_clients_by_id(p_id integer)
+RETURNS TABLE (
+    client_id integer,
+    client_firstname character varying,
+    client_lastname character varying,
+    client_phone character,
+    client_email character varying,
+    image text
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        c.client_id,
+        c.client_firstname,
+        c.client_lastname,
+        c.client_phone,
+        c.client_email,
+        c.image
+    FROM public.clients c
+    WHERE c.client_id = p_id
+    ORDER BY c.client_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION public.delete_client_request_after_deal()
+RETURNS trigger AS
+$$
+BEGIN
+    DELETE FROM public.client_requests
+    WHERE client_id = NEW.client_id;
+    
+    RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER after_deal_insert_delete_request
+AFTER INSERT
+ON public.deals
+FOR EACH ROW
+EXECUTE FUNCTION public.delete_client_request_after_deal();
+
+
+
+CREATE OR REPLACE FUNCTION public.search_client_requests_by_query(
+    query TEXT
+)
+RETURNS TABLE(
+    client_request_id INTEGER,
+    client_id INTEGER,
+    realty_id INTEGER,
+    client_firstname VARCHAR,
+    client_lastname VARCHAR,
+    realty_address TEXT,
+    request_date DATE
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        cr.client_request_id,
+        c.client_id,
+        r.realty_id,
+        c.client_firstname,
+        c.client_lastname,
+        r.realty_address,
+        cr.request_date
+    FROM
+        client_requests cr
+    INNER JOIN
+        clients c ON cr.client_id = c.client_id
+    INNER JOIN
+        realty r ON cr.realty_id = r.realty_id
+    WHERE
+        c.client_firstname ILIKE '%' || query || '%' OR
+        c.client_lastname ILIKE '%' || query || '%'
+    ORDER BY
+        cr.request_date ASC;
+END;
+$$;
+	
