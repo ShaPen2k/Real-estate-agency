@@ -31,7 +31,6 @@ namespace Real_estate_agency.Pages
 
         public AddCustomersPage(int choice, Clients clients, int p_page)
         {
-            int reqPage = p_page;
             InitializeComponent();
             page = choice;
             if (page == 2)
@@ -49,7 +48,7 @@ namespace Real_estate_agency.Pages
                 zagalovok.Text = "Добавление клиента";
                 AddClient.Content = "Добавить";
             }
-
+            reqPage = p_page;
         }
 
         private void AddClient_Click(object sender, RoutedEventArgs e)
@@ -91,7 +90,7 @@ namespace Real_estate_agency.Pages
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            if(reqPage == 1)
+            if (reqPage == 1)
                 NavigationService.Navigate(new CustomerDataPage());
             else
                 NavigationService.Navigate(new RealtyPage());

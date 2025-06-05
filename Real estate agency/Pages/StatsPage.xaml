@@ -151,7 +151,7 @@
                        Margin="9,10,10,10"
                        FontFamily="Bahnschrift SemiBold"/>
                     <TextBlock x:Name="amountAgent"
-                       Text="{Binding AmountAgent, StringFormat={}{0:N0}₽}"
+                       Text="76,500₽"
                        FontSize="16"
                        Foreground="{DynamicResource titleColor1}"
                        Margin="0,12,10,10"

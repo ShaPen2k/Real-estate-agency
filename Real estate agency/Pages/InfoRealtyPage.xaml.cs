@@ -50,7 +50,7 @@ namespace Real_estate_agency.Pages
             }
             else if (page == 2)
             {
-                NavigationService.Navigate(new CustomerDataPage());
+                NavigationService.Navigate(new ClientRequestDataPage());
             }
             else
             {

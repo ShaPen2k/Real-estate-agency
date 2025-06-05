@@ -56,8 +56,8 @@
                     <TextBlock Text="Поиск клиента: " FontSize="24" Foreground="{DynamicResource titleColor1}" HorizontalAlignment="Center" Margin="10" FontFamily="Bahnschrift SemiBold" TextAlignment="Right" Width="182"/>
                 </StackPanel>
                 <StackPanel VerticalAlignment="Stretch" Width="210" Orientation="Horizontal">
-                    <Border CornerRadius="10" BorderBrush="black" BorderThickness="1" Background="{DynamicResource panelColor}" Width="200" HorizontalAlignment="Center">
-                        <TextBox x:Name="tbSearch" FontFamily="Bahnschrift SemiBold" Background="Transparent" BorderThickness="0" FontSize="24" Foreground="{DynamicResource titleColor1}" Padding="10" Height="37" VerticalContentAlignment="Center" TextChanged="tbSearch_TextChanged"/>
+                    <Border CornerRadius="10" BorderBrush="black" BorderThickness="1" Background="{StaticResource panelColor}" Width="200" HorizontalAlignment="Center">
+                        <TextBox x:Name="tbSearch" FontFamily="Bahnschrift SemiBold" Background="Transparent" BorderThickness="0" FontSize="24" Foreground="{DynamicResource titleColor1}" Padding="10" TextChanged="tbSearch_TextChanged"/>
                     </Border>
                 </StackPanel>
                 <StackPanel VerticalAlignment="Stretch" Width="50" Orientation="Horizontal" HorizontalAlignment="Right">

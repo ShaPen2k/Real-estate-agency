@@ -42,7 +42,7 @@ namespace Real_estate_agency.Pages
             }
             else
             {
-                zagalovok.Text = "Добавление клиента";
+                zagalovok.Text = "Добавление заявки";
                 AddClientRequest.Content = "Добавить";
             }
 
